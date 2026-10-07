@@ -1,0 +1,2360 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gem Mint or Bust</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<style>
+  :root{
+    color-scheme: dark;
+    --bg:#0f0f10; --surface:#19191b; --surface-2:#222225; --surface-3:#2a2a2e;
+    --line:#2b2b2f; --line-2:#3a3a40;
+    --text:#f3f2ee; --soft:#cfcfd3; --muted:#9a9aa0; --faint:#66666c;
+    --gold:#f8c33a; --gold-deep:#f29d16; --gold-ink:#1b1300;
+    --ok:#4fd18b; --bad:#ff5d57;
+    --display: "Anton", "Impact", "Arial Narrow", sans-serif;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html,body{background:var(--bg);color:var(--text)}
+  body{font:14px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+  button{font:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+  /* nav */
+  .nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;height:60px;padding-inline:20px;background:rgba(15,15,16,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:20px;letter-spacing:-.02em}
+  .logo svg{flex:none}
+  .logo em{font-style:normal;color:var(--gold)}
+  .bz{color:var(--gold);letter-spacing:-.03em}
+  .btn-gold{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:8px;padding:9px 18px;background:linear-gradient(180deg,#fcd34d,#f5a91b);color:var(--gold-ink);font-weight:600;cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,.35) inset,0 6px 20px -8px rgba(245,169,27,.6);transition:filter .15s,transform .15s}
+  .btn-gold:hover{filter:brightness(1.06)}
+  .btn-gold:active{transform:translateY(1px)}
+  .btn-gold.is-stop{background:var(--surface-2);color:#ff7a72;box-shadow:inset 0 0 0 1px rgba(255,93,87,.5)}
+  .btn-gold.is-stop:hover{filter:none;background:rgba(255,93,87,.12);color:#ff9a93}
+  .btn-gold[disabled]{filter:grayscale(.6) brightness(.7);cursor:not-allowed}
+  .btn-ghost{border:1px solid var(--line-2);background:var(--surface-2);border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:500}
+  .btn-ghost:hover{border-color:var(--muted)}
+
+  .wrap{max-width:1120px;margin:0 auto;padding-inline:16px;padding-block:36px 72px}
+  h1{margin:0;font-size:30px;font-weight:700;letter-spacing:-.02em}
+
+  .tags{display:flex;flex-wrap:wrap;gap:6px}
+  .tags span{background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:1px 9px;font-size:12px;color:var(--soft)}
+
+  /* arena */
+  .arena{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;margin-top:32px;align-items:start}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+  .stage-card{padding:18px 20px 20px;min-width:0}
+  .main-col{display:flex;flex-direction:column;gap:16px;min-width:0}
+  .legend{padding:16px 18px 10px}
+  .legend h3{margin:0 0 4px;font-size:15px;font-weight:600}
+  .legend-t{width:100%;border-collapse:collapse;font-size:13px}
+  .legend-t th,.legend-t td{padding:9px 10px;text-align:left;vertical-align:middle;border-top:1px solid var(--line)}
+  .legend-t th:first-child{padding-left:0}
+  .legend-t thead th{border-top:0;padding-top:2px;font-size:12px;font-weight:600;color:var(--soft)}
+  .legend-t thead small{display:block;font-size:11px;font-weight:400;color:var(--faint)}
+  .legend-t tbody th{font-weight:600;white-space:nowrap}
+  .legend-t td{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .legend-t td span{margin-left:2px;font-weight:400;color:var(--muted)}
+  .legend-t td.up{color:var(--ok)}
+  .legend-t td.down{color:var(--bad)}
+  .legend-t td svg{width:.95em;height:.95em;vertical-align:-.12em;margin-right:3px}
+  .lg-ic{display:inline-grid;place-items:center;width:24px;height:24px;margin-right:9px;border-radius:6px;background:var(--surface-2);font-size:13px;font-weight:800;line-height:1;vertical-align:middle}
+  .lg-ic.happy{color:#f0a6ff}
+  .lg-ic.sleepy{color:#9ad0ff;letter-spacing:-.05em}
+  .lg-ic.bored{color:var(--muted)}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .stage-head{display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px;margin-bottom:16px}
+  .stage-head h2{margin:0;font-size:18px;font-weight:600;letter-spacing:-.01em}
+  .pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:500;background:var(--surface-2);border:1px solid var(--line);color:var(--soft)}
+  .pill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--faint)}
+  .pill[data-s="live"]::before{background:var(--bad);animation:blink 1s infinite}
+  .pill[data-s="done"]::before{background:var(--ok)}
+  .clock{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px}
+  .vol{margin-left:auto;display:flex;align-items:center;gap:6px}
+  .vol-btn{display:grid;place-items:center;width:34px;height:34px;border-radius:8px;border:1px solid var(--line-2);background:var(--surface-2);color:var(--soft);cursor:pointer}
+  .vol-btn:hover{color:var(--text);border-color:var(--muted)}
+  .vol-btn .i-off{display:none}
+  .vol-btn[aria-pressed="true"]{color:var(--bad)}
+  .vol-btn[aria-pressed="true"] .i-on{display:none}
+  .vol-btn[aria-pressed="true"] .i-off{display:block}
+  #volSlider{width:92px;accent-color:var(--gold);cursor:pointer}
+  .fs-btn[aria-pressed="true"]{color:var(--gold)}
+  #stage{position:relative}
+  .stage-card.is-fs{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;padding:6px;border:0;border-radius:0;overflow:auto}
+  .stage-card.is-fs .stage-head{margin-bottom:6px;padding-inline:6px}
+  .stage-card.is-fs .stage-head{flex:none}
+  /* in full screen the dark box is the whole stage, edge to edge; the scene sits centered in it */
+  .stage-card.is-fs #stage{flex:1;min-height:0;display:grid;align-items:center;border:1px solid var(--line);border-radius:8px;background:#0f0f11}
+  .stage-card.is-fs .gl-box{border-color:transparent;background:none}
+  .stage-card.is-fs .fc-fit{border-color:transparent}
+  .stage-card.is-fs .countdown{border-radius:8px}
+
+  .side{display:flex;flex-direction:column;gap:16px;min-width:0}
+  .side .card{padding:16px 18px 18px}
+  .side h3{margin:0 0 4px;font-size:15px;font-weight:600}
+  .hint{color:var(--muted);font-size:12px;margin:0 0 10px}
+  textarea{width:100%;min-height:210px;resize:vertical;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:13px/1.6 var(--sans)}
+  textarea:focus{border-color:var(--gold);outline:none}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .count{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+  .count.warn{color:var(--gold)}
+  .check{display:flex;align-items:center;gap:8px;margin-top:12px;color:var(--soft);font-size:13px;cursor:pointer}
+  .check input{accent-color:var(--gold);width:15px;height:15px}
+  .results{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column}
+  .results li{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 0;border-top:1px solid var(--line)}
+  .results li:first-child{border-top:0}
+  .results .who{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .results .when{color:var(--faint);font-size:12px}
+  .results .what{grid-column:1/-1;color:var(--muted);font-size:12px}
+  .empty{color:var(--faint);font-size:13px;padding:6px 0}
+
+
+  .crack{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none}
+
+  /* ---------- Beezie Race: one mini grading line per player ---------- */
+  /* scene is drawn 720px wide and scaled to fit the stage */
+  /* the box pads the scene; the inner frame clips it */
+  .gl-box{width:fit-content;margin-inline:auto;border-radius:10px;border:1px solid var(--line);background:#0f0f11}
+  .gl-fit{position:relative;overflow:hidden;border-radius:6px}
+  .gl{position:absolute;left:0;top:0;width:1340px;transform-origin:0 0;overflow:hidden;background:#0f0f11}
+  .gl > *{position:absolute}
+  .gl-head{left:0;right:0;top:0;height:60px;border-bottom:1px solid var(--line);background:#0b0b0c}
+  .gl-clock{left:12px;top:9px}
+  .gl-clock small{display:block;font:600 8px/1 var(--sans);letter-spacing:.2em;color:var(--faint)}
+  .gl-clock b{display:block;margin-top:5px;font:400 28px/1 var(--display);font-weight:400;color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+  .gl-hd{top:40px;width:90px;text-align:center;white-space:nowrap;font:600 9px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .ln{--w1:#19191c;--w2:#111113;left:0;width:720px;height:90px;border-bottom:1px solid #050506;transition:opacity .4s;
+    background:
+      radial-gradient(46px 70px at 236px 16px,rgba(248,195,58,.09),transparent),
+      radial-gradient(46px 70px at 352px 16px,rgba(248,195,58,.09),transparent),
+      radial-gradient(46px 70px at 470px 16px,rgba(248,195,58,.09),transparent),
+      radial-gradient(46px 70px at 578px 16px,rgba(248,195,58,.09),transparent),
+      linear-gradient(180deg,var(--w1),var(--w2))}
+  .ln.alt{--w1:#1c1c20;--w2:#141416}
+  .ln.win{--w1:#33290f;--w2:#17130a}
+  .ln.dim{opacity:.4}
+  /* divider between columns of entrants: a gold rule with a dark gutter on each side */
+  .gl-div{width:2px;margin-left:-1px;z-index:22;pointer-events:none;background:rgba(248,195,58,.7);box-shadow:-2px 0 0 #050506,2px 0 0 #050506}
+  /* the whole row flashes at QC: green for a pass, red for a fail */
+  .ln::after{content:"";position:absolute;inset:0;z-index:20;pointer-events:none;opacity:0}
+  .ln.qc-ok::after{background:linear-gradient(90deg,rgba(79,209,139,.5),rgba(79,209,139,.28));box-shadow:inset 0 0 0 2px rgba(79,209,139,.9);animation:rowflash .8s ease-out}
+  .ln.qc-bad::after{background:linear-gradient(90deg,rgba(255,93,87,.28),rgba(255,93,87,.5));box-shadow:inset 0 0 0 2px rgba(255,93,87,.9);animation:rowflash .8s ease-out}
+  .ln > *{position:absolute}
+  .ln-name{left:12px;top:30px;width:96px;line-height:1.25}
+  .ln-name b{display:block;font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ln-name span{font-size:10px;color:var(--faint);font-variant-numeric:tabular-nums}
+  .ln-name .ln-mod{display:block;width:max-content;margin-top:1px;transform-origin:0 50%;font-size:10px;font-weight:700;cursor:help;opacity:0;transform:scale(.5);transition:opacity .25s,transform .35s cubic-bezier(.2,1.6,.4,1)}
+  .ln-name .ln-mod.show{opacity:1;transform:none}
+  .ln-name .ln-mod.up{color:var(--ok)}
+  .ln-name .ln-mod.down{color:var(--bad)}
+  /* same green/red at every size; big swings glow: 30% faintly, 40% softly pulsing */
+  .ln-name .ln-mod.up.lv3{text-shadow:0 0 .4em rgba(93,255,157,.25),0 0 .9em rgba(29,255,116,.25),0 0 1.6em rgba(29,255,116,.2)}
+  .ln-name .ln-mod.up.lv4{text-shadow:0 0 .4em rgba(93,255,157,.5),0 0 .9em rgba(29,255,116,.5),0 0 1.6em rgba(29,255,116,.4);animation:glow-up 1.1s ease-in-out infinite alternate}
+  .ln-name .ln-mod.down.lv3{text-shadow:0 0 .4em rgba(255,106,92,.25),0 0 .9em rgba(255,46,31,.25),0 0 1.6em rgba(255,40,25,.2)}
+  .ln-name .ln-mod.down.lv4{text-shadow:0 0 .4em rgba(255,106,92,.5),0 0 .9em rgba(255,46,31,.5),0 0 1.6em rgba(255,40,25,.4);animation:glow-down 1.1s ease-in-out infinite alternate}
+  .ln-name .ln-mod.even{color:var(--muted)}
+  .gl.compact .ln-name .ln-mod{font-size:17px}
+  .ln-spd svg{width:.95em;height:.95em;vertical-align:-.12em;margin-right:2px}
+  .mood{top:4px;z-index:4;display:flex;gap:1px;pointer-events:none;font-weight:800;line-height:1}
+  .mood b{display:inline-block;animation:moodup 2.4s ease-in-out infinite;opacity:0}
+  .mood b:nth-child(2){animation-delay:.8s}
+  .mood b:nth-child(3){animation-delay:1.6s}
+  .mood.sleepy b{font-size:11px;color:#9ad0ff}
+  .mood.sleepy b:nth-child(2){font-size:9px}
+  .mood.sleepy b:nth-child(3){font-size:7px}
+  .mood.happy b{font-size:11px;color:#f0a6ff}
+  .mood.bored b{font-size:14px;color:var(--muted);animation-duration:3.2s}
+  .mood.angry svg{animation:angry .7s ease-in-out infinite}
+  .ln-tray-back{left:116px;top:44px;width:48px;height:40px;z-index:6;border-radius:4px 4px 0 0;background:#141417;border:1px solid var(--line)}
+  .ln-stack{left:125px;top:42px;width:30px;height:40px;z-index:9}
+  .ln-stack i{position:absolute;inset:0;border-radius:3px;border:1.5px solid rgba(255,255,255,.3);background:linear-gradient(160deg,var(--c),#1b1b1f 130%);box-shadow:0 2px 4px rgba(0,0,0,.5)}
+  .ln-stack i:nth-child(1){transform:translate(6px,-9px) rotate(5deg)}
+  .ln-stack i:nth-child(2){transform:translate(3px,-6px) rotate(-3deg)}
+  .ln-stack i:nth-child(3){transform:translate(-1px,-3px) rotate(2deg)}
+  .ln-tray{left:114px;top:60px;width:52px;height:24px;z-index:12;border-radius:3px 3px 0 0;background:linear-gradient(180deg,#2c2c31,#1e1e22);border:1px solid var(--line-2);border-bottom:0;border-top:3px solid var(--gold)}
+  .worker{top:17px;z-index:3;animation:breathe 3.2s ease-in-out infinite}
+  .worker.b{animation-delay:-1.6s}
+  .worker.moodpop{transform-origin:50% 85%;animation:moodpop .6s ease-out}
+  .worker.cheer{animation:cheer .3s ease-in-out 5}
+  .ln-board{top:8px;width:38px;height:30px;z-index:3;border-radius:5px;background:#08080a;border:1px solid var(--line-2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 6px 14px -8px #000}
+  .ln-board small{font:600 5.5px/1 var(--sans);letter-spacing:.18em;color:var(--faint)}
+  .ln-board b{font:400 16px/1 var(--display);font-weight:400;color:var(--soft)}
+  .ln-board b.miss{color:#ff8a84}
+  .ln-board b.ten{color:var(--gold);text-shadow:0 0 10px rgba(248,195,58,.85)}
+  .ln-house{top:0;width:64px;height:18px;z-index:16;border-radius:0 0 4px 4px;overflow:hidden;background:linear-gradient(180deg,#2e2e33,#222226);border:1px solid var(--line-2);border-top:0}
+  .ln-house::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:repeating-linear-gradient(45deg,var(--gold) 0 5px,#141414 5px 10px)}
+  .ln-pillar{top:18px;width:4px;height:58px;z-index:2;background:linear-gradient(90deg,#3a3a40,#5a5a61,#3a3a40)}
+  .ln-ram{top:0;width:40px;height:23px;z-index:14;will-change:transform}
+  .ln-ram i{position:absolute;left:16px;top:0;width:8px;height:18px;background:linear-gradient(90deg,#77777d,#c9c9cf,#77777d)}
+  .ln-ram b{position:absolute;left:0;top:18px;width:40px;height:5px;border-radius:1px;background:linear-gradient(180deg,#fcd34d,#f29d16);box-shadow:0 2px 0 rgba(0,0,0,.45)}
+  .ln-flash{top:24px;width:70px;height:52px;z-index:15;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.95),rgba(255,236,170,.4) 45%,transparent);opacity:0;pointer-events:none}
+  .ln-post{top:24px;width:4px;height:52px;z-index:13;background:linear-gradient(90deg,#3a3a40,#5a5a61,#3a3a40)}
+  .ln-bar{top:16px;width:52px;height:9px;z-index:13;border-radius:2px;background:#26262a;border:1px solid var(--line-2);display:grid;place-items:center;font:600 5.5px/1 var(--sans);letter-spacing:.24em;color:var(--muted)}
+  .ln-light{top:4px;width:11px;height:11px;z-index:13;border-radius:50%;background:#3a3a40;border:1.5px solid #26262a;transition:background .15s,box-shadow .15s}
+  .ln-light.ok{background:var(--gold);box-shadow:0 0 14px 3px rgba(248,195,58,.75)}
+  .ln-light.bad{background:var(--bad);box-shadow:0 0 14px 3px rgba(255,93,87,.65)}
+  .ln-vault{left:640px;top:22px;width:60px;height:56px;z-index:2;border-radius:5px;border:2px solid var(--gold);background:#050506}
+  .ln-door{left:642px;top:24px;width:56px;height:52px;z-index:11;display:grid;place-items:center;background:linear-gradient(90deg,#34343a,#24242a);transform-origin:100% 50%;transition:transform .4s ease}
+  .ln-tally{font:400 26px/1 var(--display);font-weight:400;color:var(--gold);font-variant-numeric:tabular-nums;text-shadow:0 0 10px rgba(248,195,58,.4)}
+  .ln-tally.bump{animation:bump .45s ease-out}
+  .ln-door.open{transform:scaleX(.08)}
+  .ln-belt{left:166px;top:76px;width:474px;height:6px;z-index:4;background:repeating-linear-gradient(90deg,#3a3a40 0 10px,#26262b 10px 20px)}
+  .ln-skirt{left:162px;top:82px;width:482px;height:8px;z-index:4;background:radial-gradient(circle at 10px 4px,#55555c 0 2px,#1c1c20 2.5px) 0 0/20px 8px,#1c1c20}
+  .ln-pop{left:0;top:0;z-index:25;white-space:nowrap;padding:2px 7px;border-radius:999px;font:700 9px/1.3 var(--sans);letter-spacing:.06em;background:var(--bad);color:#fff;opacity:0;pointer-events:none}
+  .ln-pop.gold{background:var(--gold);color:var(--gold-ink)}
+  .ln-pop.go{animation:rise 1s ease-out}
+  .tool{left:0;top:0;z-index:17;will-change:transform}
+  .shard{left:0;top:0;width:4px;height:6px;z-index:26;background:rgba(220,225,235,.85);clip-path:polygon(0 0,100% 30%,40% 100%)}
+  /* the card, raw or slabbed */
+  .lc{left:0;top:0;z-index:10;width:30px;height:40px;padding:2px;border-radius:3px;border:1.5px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:1px;will-change:transform;transition:border-color .15s,background .15s,filter .15s}
+  .lc-label{display:none;width:100%;height:6px;flex:none;border-radius:1px;background:#ecebe6}
+  .lc-card{width:25px;height:33px;flex:none;border-radius:2px;border:1px solid rgba(255,255,255,.28);background:linear-gradient(160deg,var(--c),#1b1b1f 130%);display:grid;place-items:center;overflow:hidden}
+  .lc.slabbed{background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.05));border-color:#c9ccd3}
+  .lc.slabbed .lc-label{display:block}
+  .lc.slabbed .lc-card{width:22px;height:26px}
+  .lc.flash{filter:brightness(2.2)}
+  .lc.ten{border-color:var(--gold);box-shadow:0 0 16px rgba(248,195,58,.8)}
+  .lc.ten .lc-label{background:var(--gold)}
+  .lc.cracked .crack{opacity:1}
+
+  /* shared 3-2-1 countdown */
+  .countdown{position:absolute;inset:0;z-index:30;display:grid;place-items:center;border-radius:10px;background:rgba(15,15,16,.5);pointer-events:none}
+  .countdown span{font:400 clamp(72px,14vw,128px)/1 var(--display);color:var(--gold);text-shadow:0 6px 30px rgba(0,0,0,.6);animation:cd .65s ease-out both}
+  .countdown.banner span{padding-inline:16px;text-align:center;font-size:clamp(34px,6.5vw,60px);line-height:1.05;animation-duration:1.4s}
+
+  /* ---------- Beezie Race finale: the claw machine ---------- */
+  .fc-fit{position:relative;overflow:hidden;border-radius:10px;border:1px solid var(--line);background:#0c0c0d;transition:opacity .45s}
+  .fc{position:absolute;left:0;top:0;width:820px;height:470px;transform-origin:0 0;overflow:hidden;
+    background:radial-gradient(320px 300px at 350px 130px,rgba(255,222,176,.14),transparent 70%),radial-gradient(70px 360px at 0 210px,rgba(70,140,255,.10),transparent 70%),radial-gradient(70px 360px at 820px 210px,rgba(70,140,255,.10),transparent 70%),linear-gradient(180deg,#131417,#0b0b0c 85%)}
+  .fc > *{position:absolute}
+  .fc-rig{left:0;top:0;width:720px;height:470px;z-index:4;transform:translateX(40px)}
+  .fc-rig > *{position:absolute}
+  .fc-rig::before{content:"";position:absolute;left:96px;top:-20px;width:408px;height:470px;z-index:0;pointer-events:none;background:radial-gradient(closest-side,rgba(255,226,180,.2),transparent)}
+  .fc-rig::after{content:"";position:absolute;left:150px;top:421px;width:300px;height:34px;z-index:0;pointer-events:none;background:linear-gradient(180deg,rgba(243,214,150,.22),transparent);filter:blur(3px)}
+  .fc-floor{left:0;right:0;top:420px;bottom:0;background:linear-gradient(180deg,#121214,#08080a 70%);border-top:1px solid var(--line)}
+  .fc-floor::before{content:"";position:absolute;left:150px;top:-4px;width:390px;height:14px;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.55),transparent)}
+  .fc-marquee{left:146px;top:14px;width:308px;height:60px;z-index:3;border-radius:14px 14px 3px 3px;background:linear-gradient(90deg,#f7bd92 0 7px,transparent 7px calc(100% - 7px),#f7bd92 calc(100% - 7px)),linear-gradient(180deg,#fff 0%,#fffaf2 55%,#fdebd6 100%);box-shadow:0 0 0 1.5px #f1c9a8,0 0 46px rgba(255,228,196,.38),0 10px 24px -14px rgba(255,214,170,.7),inset 0 2px 0 #fff,inset 0 -10px 14px -9px rgba(236,160,100,.38);display:grid;place-items:center}
+  .fc-marquee::after{content:"";position:absolute;left:0;right:0;bottom:-5px;height:5px;border-radius:0 0 2px 2px;background:linear-gradient(180deg,#f6b488,#ec9a66)}
+  .fc-marquee div svg{width:19px;height:21px;margin:0 1px 0 0}
+  .fc-marquee.pulse{animation:hopflash .45s ease-out}
+  .fc-marquee.party{animation:mq-party .28s ease-in-out infinite alternate}
+  .fc-marquee div{position:relative;display:flex;align-items:center;gap:1px;font:800 27px/1 var(--sans);letter-spacing:-.045em;color:#f2a67c;text-shadow:0 1px 0 #fff}
+  .fc-frame{left:146px;top:72px;width:268px;height:234px;z-index:1;border-radius:3px;border:10px solid #fcf5e9;border-top-width:6px;border-bottom-width:6px;background:#fcf5e9;box-shadow:inset 0 0 0 1px rgba(214,170,120,.5),0 0 0 1px rgba(226,196,160,.7)}
+  .fc-glass{left:156px;top:50px;width:248px;height:272px;z-index:2;overflow:hidden;background:linear-gradient(180deg,#fdf3d2 0%,#f6e1ab 45%,#ecce8b 100%);box-shadow:inset 0 0 0 2px #f0a66c,inset 16px 0 20px -12px rgba(150,95,30,.38),inset -16px 0 20px -12px rgba(150,95,30,.38),inset 0 -46px 38px -22px rgba(125,75,15,.5),inset 0 60px 40px -30px rgba(255,252,236,.85)}
+  .fc-glass::before{content:"";position:absolute;left:8px;right:8px;top:30px;height:5px;z-index:1;border-radius:3px;background:linear-gradient(180deg,#fff,#fff3cf);box-shadow:0 0 10px 3px rgba(255,246,214,.95),0 12px 34px 10px rgba(255,244,205,.5)}
+  .fc-glass svg{position:absolute;inset:0;width:100%;height:100%}
+  .fc-rail{left:160px;top:86px;width:240px;height:7px;z-index:6;border-radius:2px;background:linear-gradient(180deg,#fffdf8,#e4ddd1 50%,#b7aea0);box-shadow:0 2px 3px rgba(90,55,10,.3)}
+  .fc-rail::before,.fc-rail::after{content:"";position:absolute;top:-5px;width:9px;height:17px;border-radius:2px;background:linear-gradient(180deg,#fbe3cc,#eeb88f);box-shadow:0 1px 2px rgba(90,55,10,.35)}
+  .fc-rail::before{left:-3px}
+  .fc-rail::after{right:-3px}
+  .fc-chute{left:168px;top:241px;width:54px;height:59px;z-index:3;border-radius:3px 3px 0 0;border:1px solid rgba(255,255,255,.5);border-bottom:0;background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,.05))}
+  .fc-chute-front{left:162px;top:236px;width:66px;height:64px;z-index:9;border-radius:4px 4px 0 0;border:1.5px solid rgba(255,255,255,.85);border-top-width:3px;border-bottom:0;background:linear-gradient(112deg,rgba(255,255,255,.34),rgba(255,255,255,.08) 36%,rgba(255,255,255,.22) 50%,rgba(255,255,255,.05) 62%,rgba(255,255,255,.14));box-shadow:0 0 8px rgba(255,255,255,.3),inset 0 0 10px rgba(255,255,255,.18)}
+  /* solid cabinet to the right of the window: a price tag and a cash slot */
+  .fc-ctrl{left:414px;top:72px;width:40px;height:234px;z-index:8;background:linear-gradient(90deg,#f1e2c8,#fcf5e9 30%,#fcf5e9 70%,#eddcbd);box-shadow:inset 5px 0 6px -5px rgba(150,100,40,.4)}
+  .fc-ctrl svg{position:absolute;inset:0;width:100%;height:100%}
+  .fc-shine{left:156px;top:78px;width:248px;height:222px;z-index:10;pointer-events:none;background:linear-gradient(108deg,transparent 18%,rgba(255,255,255,.16) 24%,rgba(255,255,255,.05) 31%,transparent 32%,transparent 70%,rgba(255,255,255,.1) 74%,transparent 80%),linear-gradient(180deg,rgba(255,255,255,.1),transparent 30%)}
+  .fc-body{left:146px;top:304px;width:308px;height:116px;z-index:8;overflow:hidden;border-radius:0 0 8px 8px;background:linear-gradient(90deg,rgba(150,100,30,.28),transparent 9%,transparent 91%,rgba(150,100,30,.28)),linear-gradient(180deg,#f8e6ad,#f2d88f 55%,#e3bf6c);box-shadow:inset 0 -12px 14px -10px rgba(120,75,15,.5),inset 0 16px 14px -12px rgba(120,75,15,.35)}
+  .fc-body svg{position:absolute;inset:0;width:100%;height:100%}
+  .fc-panel{left:138px;top:298px;width:324px;height:15px;z-index:9;border-radius:5px;background:linear-gradient(180deg,#ffe2c6,#f6b281 45%,#e9945a);box-shadow:0 5px 10px rgba(60,30,0,.4),inset 0 1px 0 rgba(255,255,255,.85)}
+  .fc-led{left:256px;top:350px;width:76px;height:34px;z-index:9;border-radius:6px;background:linear-gradient(180deg,#141a33,#232c52);border:2px solid #fff8ec;box-shadow:0 0 0 1.5px #e7a66f,0 3px 6px rgba(90,50,0,.35),inset 0 0 10px rgba(0,0,0,.6);display:grid;place-items:center;font:400 13px/1 var(--display);font-weight:400;letter-spacing:.04em;color:#ffd27a;text-shadow:0 0 8px rgba(255,200,110,.7)}
+  .fc-door{left:170px;top:337px;width:72px;height:60px;z-index:9;border-radius:36px 36px 6px 6px;background:#1b130e;border:4px solid #fff7ea;box-shadow:inset 0 8px 14px rgba(0,0,0,.85),0 0 0 1.5px #e7a66f,0 4px 8px rgba(90,50,0,.35)}
+  .fc-btn{left:408px;top:295px;width:24px;height:11px;z-index:10;border-radius:50%;background:radial-gradient(circle at 40% 30%,#ffd0a2,#f58a2e 60%,#e2701a);box-shadow:0 3px 0 #a9500f,0 4px 4px rgba(40,50,90,.4);transition:transform .1s,box-shadow .1s}
+  .fc-btn.down{transform:translateY(2px);box-shadow:0 1px 0 #a9500f}
+  .fc-console{left:400px;top:290px;width:66px;height:30px;z-index:9;border-radius:10px;background:linear-gradient(180deg,#f1f5ff 0%,#cddaf6 40%,#9fb4e4 100%);box-shadow:0 6px 12px rgba(0,0,0,.4),inset 0 2px 0 #fff,inset 0 -5px 7px rgba(70,90,150,.4),inset 0 0 0 1px rgba(120,140,200,.5)}
+  .fc-console::after{content:"";position:absolute;left:40.5px;top:6px;width:19px;height:7px;border-radius:50%;background:#5d6b94}
+  .fc-stick{left:447.5px;top:272px;width:5px;height:28px;z-index:10;border-radius:3px;background:linear-gradient(90deg,#77787e,#f2f2f5 45%,#8a8b91);transform-origin:50% 100%}
+  .fc-stick::before{content:"";position:absolute;left:-6.5px;top:-9px;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 36% 30%,#ffe2c2 0,#ffb066 22%,#f58a2e 58%,#c75f16 100%);box-shadow:0 2px 3px rgba(40,50,90,.4)}
+  .fc-sticker{left:372px;top:357px;z-index:9;padding:3px 6px 2px;border-radius:4px;background:linear-gradient(180deg,#ffe36b,#ffc928);border:1.5px solid #2a2a2e;transform:rotate(-7deg);font:900 7px/1.05 var(--sans);letter-spacing:.04em;text-align:center;color:#d83a3c;box-shadow:1.5px 2px 0 rgba(42,42,46,.85)}
+  .fc .fc-claw{top:88px;z-index:7}
+  .fc-player{left:0;top:0;z-index:12;overflow:visible;pointer-events:none}
+  .fc-player .exp{display:none}
+  .fc-player .exp-normal,.fc-player.sad .exp-sad,.fc-player.happy .exp-happy{display:inline}
+  .fc-player.sad .exp-normal,.fc-player.happy .exp-normal{display:none}
+  .eye{transform-box:fill-box;transform-origin:50% 50%;animation:wink 4.2s infinite}
+  .worker.b .eye{animation-delay:-2.1s}
+  .fc-player .headg{transform-box:fill-box;transform-origin:50% 80%}
+  .fc-player .arm-far{filter:brightness(.9)}
+  .fc-player .headg.no{animation:headno .5s ease-in-out}
+  .fc-player .headg.yes{animation:headyes .3s ease-in-out 4}
+  .fc-bubble{left:580px;top:252px;z-index:14;padding:6px 11px;border-radius:12px;background:#f3f2ee;color:#111;font:700 13px/1.2 var(--sans);white-space:nowrap;opacity:0;transform:translateY(6px);transition:opacity .2s,transform .2s;pointer-events:none}
+  .fc-bubble::after{content:"";position:absolute;left:22px;top:100%;border:6px solid transparent;border-bottom:0;border-top-color:#f3f2ee}
+  .fc-bubble.show{opacity:1;transform:none}
+  .fc-bubble.win{background:var(--gold);color:var(--gold-ink)}
+  .fc-bubble.win::after{border-top-color:var(--gold)}
+  .fc-feed-label{left:10px;top:112px;z-index:3;font:600 7.5px/1 var(--sans);letter-spacing:.2em;color:var(--faint)}
+  .fc-feed{left:0;top:130px;width:150px;height:6px;z-index:3;background:repeating-linear-gradient(90deg,#3a3a40 0 10px,#26262b 10px 20px)}
+  .fc-feed.run{animation:beltrun .4s linear infinite}
+  .fc-feed-skirt{left:0;top:136px;width:150px;height:7px;z-index:3;background:radial-gradient(circle at 10px 3.5px,#55555c 0 2px,#1c1c20 2.5px) 0 0/20px 7px,#1c1c20}
+  .fc-inlet{left:143px;top:96px;width:16px;height:40px;z-index:3;border-radius:3px;background:#050506;border:2px solid #c98410}
+  .fc-inlet.pulse{animation:inlet .5s ease-out}
+  .ft-tag{left:0;top:0;z-index:4;max-width:92px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:1px 6px;border-radius:999px;background:rgba(15,15,16,.92);border:1px solid var(--line-2);font:600 8px/1.4 var(--sans);color:var(--text)}
+  .fc-dim{left:0;top:0;width:820px;height:470px;z-index:20;pointer-events:none;opacity:0;transition:opacity .4s;background:radial-gradient(circle at 50% 45%,rgba(40,30,8,.55),rgba(5,5,6,.92) 70%)}
+  .fc-dim.on{opacity:1}
+  .fc-rays{left:110px;top:-104px;width:600px;height:600px;z-index:21;pointer-events:none;opacity:0;transform:scale(.5);transition:opacity .45s,transform .7s cubic-bezier(.2,1.2,.4,1)}
+  .fc-rays::before{content:"";position:absolute;inset:0;border-radius:50%;background:repeating-conic-gradient(rgba(248,195,58,.32) 0 6deg,transparent 6deg 18deg);-webkit-mask:radial-gradient(circle,#000 14%,transparent 64%);mask:radial-gradient(circle,#000 14%,transparent 64%);animation:spin 16s linear infinite}
+  .fc-rays.on{opacity:1;transform:scale(1)}
+  .fc-name{left:0;top:96px;width:820px;z-index:26;text-align:center;pointer-events:none;opacity:0;transition:opacity .35s}
+  .fc-name.on{opacity:1;animation:namein .7s cubic-bezier(.2,1.5,.4,1)}
+  .fc-name small{display:block;font:700 13px/1 var(--sans);letter-spacing:.34em;color:var(--gold)}
+  .fc-name .av{display:flex;justify-content:center;margin:12px 0 6px;filter:drop-shadow(0 0 14px rgba(248,195,58,.6))}
+  .fc-name b{display:block;padding-inline:24px;font:400 64px/1 var(--display);font-weight:400;letter-spacing:.01em;text-transform:uppercase;overflow-wrap:anywhere;color:var(--gold);text-shadow:0 0 28px rgba(248,195,58,.85),0 4px 0 #7a4f06}
+  .fc-name span{display:block;margin-top:12px;font:600 13px/1 var(--sans);color:var(--soft)}
+  .fc-flash{left:0;top:0;width:820px;height:470px;z-index:30;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 45%,#fff 0,rgba(255,246,214,.95) 22%,rgba(248,195,58,.4) 52%,transparent 78%)}
+  .spark{left:0;top:0;width:7px;height:7px;z-index:27;border-radius:1px;pointer-events:none}
+  .cap.big{z-index:25;filter:drop-shadow(0 0 10px rgba(248,195,58,.85))}
+  .cap b{position:absolute;inset:0;z-index:2;display:grid;place-items:center;font:400 13px/1 var(--display);font-weight:400;color:#2b2b30;text-shadow:-1px 0 #fff,1px 0 #fff,0 -1px #fff,0 1px #fff;transition:opacity .3s}
+  .cap.open b{opacity:0}
+  .cap.glow{filter:drop-shadow(0 0 10px rgba(248,195,58,.95))}
+  .fc-flap{left:174px;top:341px;width:64px;height:52px;z-index:11;border-radius:32px 32px 3px 3px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:7px;background:radial-gradient(60px 40px at 40% 18%,#ffd3a6,transparent 70%),linear-gradient(180deg,#fbab66,#ec7d2a);box-shadow:inset 0 2px 0 rgba(255,255,255,.55),inset 0 -6px 8px rgba(160,70,0,.35);font:700 8px/1 var(--sans);letter-spacing:.22em;color:#fff6e8;transform-origin:50% 0;transition:transform .22s ease}
+  .fc-flap.open{transform:scaleY(.1)}
+  /* hand-off: the floor dims, the claw machine appears over it and the Gem Mint slabs fly in */
+  .gl-dim{left:0;top:0;width:720px;z-index:35;pointer-events:none;background:rgb(10,10,11);opacity:0;transition:opacity .45s}
+  .gl-dim.on{opacity:.78}
+  .fc.mini{background:none;overflow:visible;z-index:40;opacity:0;transition:opacity .45s}
+  .fc.mini.on{opacity:1}
+  .fc .cap.big{z-index:25}
+  .fc .cap.hires{z-index:30;width:130px;height:130px;will-change:auto}
+  .cap.hires::before{left:3px;right:3px;top:62px;height:6px}
+  .cap.hires i{width:130px;height:65px}
+  .cap.hires .ct{border-radius:65px 65px 0 0;border-width:4px}
+  .cap.hires .ct::after{left:24px;top:14px;width:34px;height:18px}
+  .cap.hires .cb{top:65px;border-radius:0 0 65px 65px;border-width:4px}
+  .cap.hires b{font-size:64px;text-shadow:-3px 0 #fff,3px 0 #fff,0 -3px #fff,0 3px #fff,0 6px 0 rgba(0,0,0,.25)}
+  .cap.hires.open .ct{transform:translate(-40px,-90px) rotate(-40deg)}
+  .cap.hires.open .cb{transform:translate(30px,50px) rotate(25deg)}
+  .gl-hd.sm{top:66px;width:60px;font-size:8px;letter-spacing:.12em}
+  .gl.compact .ln-name{top:10px;width:108px}   /* name, then the inspector and grader tags on their own lines */
+  .gl.compact .ln-name b{font-size:22px}
+  .gl.compact .ln-name span{font-size:17px}
+  .gl.compact .ln-tally{font-size:40px}
+  .fc-odds li.more{display:block;text-align:center;color:var(--muted);font-size:10px}
+  .fc-odds{left:638px;top:12px;width:170px;z-index:3}
+  .fc-odds small{display:block;margin-bottom:5px;font:600 7.5px/1 var(--sans);letter-spacing:.16em;color:var(--faint)}
+  .fc-odds ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+  .fc-odds li{display:grid;grid-template-columns:16px minmax(0,1fr) 24px 32px;gap:0 6px;align-items:center;padding:2px 8px;border-radius:5px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:10px;line-height:1.35;transition:background .3s,border-color .3s,opacity .3s}
+  .fc-odds li em{width:16px;height:16px;border-radius:50%;font:400 10px/16px var(--display);font-style:normal;text-align:center;color:#fff;background:linear-gradient(180deg,#5b8fd8,#2a569c);box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+  .fc-odds li b{font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .fc-odds li i{font-style:normal;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+  .fc-odds li span{font-weight:700;color:var(--gold);text-align:right;font-variant-numeric:tabular-nums}
+  .fc-odds li.placed{background:rgba(248,195,58,.16);border-color:var(--gold)}
+  .fc-odds li.placed i{opacity:.5}
+  /* capsules: all identical until opened */
+  .cap{left:0;top:0;z-index:5;width:26px;height:26px;will-change:transform}
+  .cap::before{content:"";position:absolute;left:1px;right:1px;top:12px;height:2px;z-index:1;background:rgba(0,0,0,.28)}
+  .cap i{position:absolute;left:0;width:26px;height:13px;transition:transform .35s ease,opacity .35s}
+  .cap .ct{top:0;border-radius:13px 13px 0 0;background:radial-gradient(9px 6px at 32% 38%,rgba(255,255,255,.95),transparent 70%),linear-gradient(180deg,rgba(250,252,255,.96),rgba(206,222,246,.82));border:1.5px solid rgba(12,28,60,.4);border-bottom:0}
+  .cap .ct::after{content:"";position:absolute;left:5px;top:3px;width:7px;height:4px;border-radius:50%;background:rgba(255,255,255,.9)}
+  .cap .cb{top:13px;border-radius:0 0 13px 13px;background:radial-gradient(12px 7px at 60% 80%,rgba(140,190,255,.55),transparent 70%),linear-gradient(180deg,#6397de,#27529a);border:1.5px solid rgba(12,28,60,.4);border-top:0}
+  .cap.open::before{opacity:0}
+  .cap.open .ct{transform:translate(-8px,-18px) rotate(-40deg);opacity:0}
+  .cap.open .cb{transform:translate(6px,10px) rotate(25deg);opacity:0}
+  .cap.held{z-index:6}
+  .cap.out{z-index:10}
+  /* podium slots on the left */
+  .fc-place{left:12px;width:126px;height:56px;z-index:3;border-radius:10px;border:1.5px dashed var(--line-2);display:flex;align-items:center;gap:6px;padding:6px 8px 0;transition:background .3s,border-color .3s,box-shadow .3s}
+  .fc-place em{position:absolute;left:8px;top:-8px;padding:1px 6px;border-radius:4px;background:#141416;font:400 12px/1.2 var(--display);font-style:normal;letter-spacing:.04em;color:var(--faint)}
+  .fc-place .av{flex:none;display:none}
+  .fc-place .who{display:flex;flex-direction:column;min-width:0;opacity:.4}
+  .fc-place .who b{font-size:11.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .fc-place .who span{font-size:9.5px;color:var(--muted)}
+  .fc-place.won{border-style:solid;border-color:var(--gold);background:rgba(248,195,58,.14);box-shadow:0 0 22px rgba(248,195,58,.25)}
+  .fc-place.won em{color:var(--gold-ink);background:var(--gold)}
+  .fc-place.won .av{display:block}
+  .fc-place.won .who{opacity:1;animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
+  .fc-place.won .who span{color:var(--gold)}
+
+  /* settings + podium */
+  .setting{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+  .len-note{margin:12px 0 0;font-size:12px;color:var(--muted)}
+  .len-note b{color:var(--gold);font-weight:600}
+  .setting > span{color:var(--soft);font-size:13px;white-space:nowrap}
+  .seg{display:inline-flex;padding:2px;border-radius:8px;background:var(--bg);border:1px solid var(--line)}
+  .seg button{border:0;background:transparent;padding:5px 8px;border-radius:6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-variant-numeric:tabular-nums}
+  .seg button:hover{color:var(--text)}
+  .seg button[aria-pressed="true"]{background:var(--gold);color:var(--gold-ink)}
+  .seg button:disabled{cursor:not-allowed;opacity:.6}
+  .podium{list-style:none;margin:18px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;text-align:left}
+  .podium li{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px;background:var(--surface-2);border:1px solid var(--line)}
+  .podium span{flex:none;width:34px;font:400 18px/1 var(--display);color:var(--muted)}
+  .podium b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  .claw{position:absolute;top:14px;left:0;width:60px;z-index:6;will-change:transform}
+  .rope{width:2.5px;margin:0 auto;background:linear-gradient(90deg,#6d6e74,#d5d5da,#6d6e74)}
+  .head{position:relative;height:44px}
+  .hub{width:28px;height:16px;margin:0 auto;border-radius:4px 4px 10px 10px;background:linear-gradient(90deg,#6f7076,#fafafc 38%,#c4c5cb 62%,#77787e);box-shadow:0 2px 2px rgba(60,35,0,.35),inset 0 -3px 3px rgba(0,0,0,.18)}
+  .arm{position:absolute;top:9px;width:5px;height:32px;border-radius:3px;background:linear-gradient(90deg,#77787e,#f6f6f8 45%,#8e8f95);box-shadow:0 1px 2px rgba(60,35,0,.3);transform-origin:50% 0;transition:transform .28s ease}
+  .arm::after{content:"";position:absolute;bottom:-2px;width:10px;height:6px;border-radius:3px;background:linear-gradient(180deg,#f1f1f4,#a9aab0)}
+  .fc-claw::before{content:"";position:absolute;left:14px;top:-10px;width:32px;height:12px;border-radius:3px;background:linear-gradient(180deg,#fff6ea,#f3caa4);box-shadow:0 2px 3px rgba(60,35,0,.35),inset 0 1px 0 #fff}
+  .arm.l{left:14px;transform:rotate(4deg)}
+  .arm.l::after{left:0}
+  .arm.r{right:14px;transform:rotate(-4deg)}
+  .arm.r::after{right:0}
+  .claw.open .arm.l{transform:rotate(34deg)}
+  .claw.open .arm.r{transform:rotate(-34deg)}
+
+  /* ---------- winner ---------- */
+  .winner{position:fixed;inset:0;z-index:40;display:grid;place-items:center;padding:16px;background:rgba(6,6,7,.72);backdrop-filter:blur(4px)}
+  .winner-box{width:min(440px,100%);text-align:center;padding:30px 24px 24px;border-radius:16px;background:var(--surface);border:1px solid var(--gold);box-shadow:0 30px 80px -20px rgba(248,195,58,.35);animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
+  .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .win-name{margin:10px 0 6px;font:400 clamp(40px,10vw,60px)/1 var(--display);color:var(--gold);text-transform:uppercase;overflow-wrap:anywhere;text-wrap:balance}
+  .win-detail{color:var(--soft);margin:0}
+  .win-actions{display:flex;justify-content:center;gap:10px;margin-top:22px;flex-wrap:wrap}
+  #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
+
+  @keyframes blink{50%{opacity:.25}}
+  @keyframes rowflash{0%{opacity:0}12%{opacity:1}35%{opacity:.55}100%{opacity:0}}
+  @keyframes slide{from{opacity:0;transform:translateY(-4px)}}
+  @keyframes hop{50%{transform:translateY(-4px)}}
+  @keyframes leg{from{transform:rotate(-28deg)}to{transform:rotate(28deg)}}
+  @keyframes shake{20%{transform:translateX(-3px) rotate(-3deg)}40%{transform:translateX(3px) rotate(2deg)}60%{transform:translateX(-2px)}80%{transform:translateX(1px)}}
+  @keyframes pop{from{opacity:0;transform:scale(.9)}}
+  @keyframes breathe{50%{transform:translateY(1.5px)}}
+  @keyframes cheer{50%{transform:translateY(-6px)}}
+  @keyframes rise{0%{opacity:0;translate:0 6px}15%{opacity:1;translate:0 0}75%{opacity:1}100%{opacity:0;translate:0 -12px}}
+  @keyframes mq-party{to{box-shadow:0 0 60px rgba(255,200,120,.75),inset 0 -8px 12px rgba(236,160,100,.16)}}
+  @keyframes headno{25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
+  @keyframes headyes{50%{transform:translateY(-6px)}}
+  @keyframes wink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.12)}}
+  @keyframes bump{40%{transform:scale(1.6)}}
+  @keyframes beltrun{to{background-position-x:20px}}
+  @keyframes inlet{0%{box-shadow:0 0 0 0 rgba(255,236,170,.95)}100%{box-shadow:0 0 18px 12px rgba(255,236,170,0)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes namein{from{opacity:0;transform:scale(.4)}}
+  @keyframes hopflash{0%{filter:brightness(2.4)}100%{filter:none}}
+  @keyframes moodup{0%{opacity:0;transform:translate(0,6px)}25%{opacity:1}80%{opacity:.8}100%{opacity:0;transform:translate(6px,-10px)}}
+  @keyframes angry{50%{transform:scale(1.25)}}
+  @keyframes moodpop{0%{transform:scale(1)}30%{transform:scale(1.28) rotate(-7deg)}60%{transform:scale(.94) rotate(4deg)}100%{transform:scale(1)}}
+  @keyframes glow-up{to{text-shadow:0 0 .5em rgba(93,255,157,.6),0 0 1.2em rgba(29,255,116,.6),0 0 2.2em rgba(29,255,116,.5)}}
+  @keyframes glow-down{to{text-shadow:0 0 .5em rgba(255,106,92,.6),0 0 1.2em rgba(255,46,31,.6),0 0 2.2em rgba(255,40,25,.5)}}
+  @keyframes cd{0%{opacity:0;transform:scale(1.6)}25%{opacity:1;transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:scale(.9)}}
+
+  @media (max-width:900px){
+    .arena{grid-template-columns:minmax(0,1fr)}
+  }
+  @media (max-width:560px){
+    .nav{padding-inline:16px}
+    .stage-card{padding:14px}
+    .legend-t th,.legend-t td{padding-inline:6px}
+    .legend-t td span{display:block;margin:0;font-size:11px}
+    #volSlider{width:64px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .running .hop,.running .leg,.pill[data-s="live"]::before,.worker,.eye,.mood b,.mood svg,.ln-mod,.fc-rays::before,.fc-feed.run{animation:none}
+  }
+</style>
+
+<header class="nav">
+  <div class="logo">
+    <svg width="22" height="24" viewBox="0 0 22 24" aria-hidden="true"><path d="M11 1l9.5 5.5v11L11 23 1.5 17.5v-11z" fill="#f8c33a"/><path d="M11 7l4.8 2.8v5.4L11 18l-4.8-2.8V9.8z" fill="#0f0f10"/></svg>
+    <span class="bz">beezie</span>
+  </div>
+  <button class="btn-gold" id="navStart" type="button">
+    <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg>
+    Start game
+  </button>
+</header>
+
+<main class="wrap">
+  <h1>Gem Mint or Bust</h1>
+
+  <div class="arena">
+    <div class="main-col">
+    <section class="card stage-card" aria-live="polite">
+      <div class="stage-head">
+        <span class="pill" id="status" data-s="ready">Ready</span>
+        <span class="clock" id="clock">0.0s</span>
+        <div class="vol">
+          <button class="vol-btn" id="volBtn" type="button" aria-label="Mute sound" aria-pressed="false">
+            <svg class="i-on" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+            <svg class="i-off" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+          <input type="range" id="volSlider" min="0" max="100" step="1" aria-label="Volume">
+        </div>
+        <button class="btn-gold" id="start" type="button">
+          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg>
+          Start
+        </button>
+        <button class="vol-btn fs-btn" id="fsBtn" type="button" aria-label="Enter full screen" title="Full screen" aria-pressed="false">
+          <svg class="i-on" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="i-off" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div id="stage"></div>
+    </section>
+
+    <section class="card legend" aria-labelledby="legendTitle">
+      <h3 id="legendTitle">Staff moods</h3>
+      <p class="hint">Every inspector and grader rolls a mood when the game starts: 60% normal, 25% sleepy or bored, 15% happy or angry.</p>
+      <table class="legend-t">
+        <thead><tr><th scope="col"><span class="sr">Mood</span></th><th scope="col">Inspector<small>inspection time</small></th><th scope="col">Grader<small>chance of a 10</small></th></tr></thead>
+        <tbody id="legendBody"></tbody>
+      </table>
+    </section>
+    </div>
+
+    <aside class="side">
+      <div class="card">
+        <h3>Game settings</h3>
+        <p class="hint">Everything plays at normal speed.</p>
+        <div class="setting"><span id="lenLabel">Game length</span>
+          <div class="seg" id="segLen" role="group" aria-labelledby="lenLabel"><button type="button" data-v="10">10s</button><button type="button" data-v="20">20s</button><button type="button" data-v="30">30s</button><button type="button" data-v="60">60s</button></div></div>
+        <div class="setting"><span id="winLabel">Winners</span>
+          <div class="seg" id="segWin" role="group" aria-labelledby="winLabel"><button type="button" data-v="1">1</button><button type="button" data-v="2">2</button><button type="button" data-v="3">3</button></div></div>
+        <p class="len-note" id="lenNote"></p>
+      </div>
+      <div class="card">
+        <h3>Entrants</h3>
+        <p class="hint">One name per line. Up to 80 play.</p>
+        <textarea id="names" spellcheck="false" aria-label="Entrant names, one per line"></textarea>
+        <div class="row">
+          <span class="count" id="count"></span>
+          <button class="btn-ghost" id="shuffle" type="button">Shuffle</button>
+        </div>
+        <label class="check"><input type="checkbox" id="removeWinner"> Remove winners after each game</label>
+      </div>
+      <div class="card">
+        <h3>Results</h3>
+        <ul class="results" id="results"></ul>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<div class="winner" id="winner" hidden>
+  <div class="winner-box" role="dialog" aria-modal="true" aria-labelledby="winName">
+    <div class="eyebrow" id="winEyebrow">Winner</div>
+    <div class="win-name" id="winName"></div>
+    <p class="win-detail" id="winDetail"></p>
+    <ol class="podium" id="winPodium" hidden></ol>
+    <div class="win-actions">
+      <button class="btn-gold" id="again" type="button">Race again</button>
+      <button class="btn-ghost" id="close" type="button">Close</button>
+    </div>
+  </div>
+</div>
+<canvas id="fx"></canvas>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const COLORS = ['#f8c33a','#5ad1a6','#ff7a59','#7aa2ff','#e67cf2','#9be15d','#ffb3c7','#4fd6e8','#ff9f1c','#c3a6ff','#f25f5c','#b8f2e6'];
+  const laneColor = i => COLORS[i] || `hsl(${(i * 47 + 20) % 360} 72% 64%)`;
+  const MAX_PLAYERS = 80;
+  const SAMPLE = ['GrailHunter','SlabDaddy','holo_hana','PackRipper','mintcondition','VaultKeeper','charizardcarl','toploader_tim'];
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  let gen = 0;   // bumped by Stop: anything still waiting from the stopped game never resumes
+  const wait = ms => { const g = gen; return new Promise(r => setTimeout(() => { if (g === gen) r(); }, ms)); };
+  const esc = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const store = {
+    get(k, d){ try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+    set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+  };
+
+  const stage = $('#stage'), namesEl = $('#names');
+  const mode = 'grade';
+  let gameLen = store.get('gd-len', 20);     // rough seconds the whole game takes
+  let winnersN = store.get('gd-winners-v2', 3); // podium size (new key so everyone starts at 3)
+  let running = false;
+  let results = store.get('gd-results', []);
+  namesEl.value = store.get('gd-names', SAMPLE.join('\n'));
+
+  function creature(color, v, size = 40){
+    const ears = [
+      `<path d="M12 10 L13 1 L18 8Z M20 7 L24 0 L26 8Z" fill="${color}"/>`,
+      `<path d="M16 9 L13 2 M24 9 L27 2" stroke="${color}" stroke-width="2"/><circle cx="13" cy="2.5" r="2.3" fill="#fff"/><circle cx="27" cy="2.5" r="2.3" fill="#fff"/>`,
+      `<circle cx="12" cy="10" r="4.8" fill="${color}"/><circle cx="25" cy="8.5" r="4.8" fill="${color}"/>`,
+      `<path d="M7 16 L1 12 L8 12Z M9 11 L6 4 L13 9Z M15 9 L15 2 L20 8Z" fill="${color}"/>`
+    ][v % 4];
+    return `<svg viewBox="0 0 40 38" width="${size}" height="${Math.round(size*.95)}" aria-hidden="true">${ears}
+      <rect class="leg l1" x="13" y="27" width="4.5" height="9" rx="2.2" fill="${color}"/>
+      <rect class="leg l2" x="22.5" y="27" width="4.5" height="9" rx="2.2" fill="${color}"/>
+      <ellipse cx="20" cy="20" rx="15" ry="11.5" fill="${color}"/>
+      <ellipse cx="17" cy="24.5" rx="9" ry="4.6" fill="#fff" opacity=".22"/>
+      <circle cx="28" cy="16" r="4.8" fill="#fff"/><circle cx="29.7" cy="16.2" r="2.4" fill="#111"/>
+      <path d="M32 22.5 q2 1.3 3.4 0" stroke="#111" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>`;
+  }
+
+  function entrants(){
+    const seen = new Set(), out = [];
+    for (const raw of namesEl.value.split('\n')) {
+      const n = raw.trim().slice(0, 24);
+      if (n && !seen.has(n.toLowerCase())) { seen.add(n.toLowerCase()); out.push(n); }
+    }
+    return out;
+  }
+  function updateCount(){
+    const n = entrants().length, c = $('#count');
+    c.textContent = n > MAX_PLAYERS ? `${n} names · first ${MAX_PLAYERS} play` : `${n} entrant${n === 1 ? '' : 's'}`;
+    c.classList.toggle('warn', n > MAX_PLAYERS || n < 2);
+  }
+
+  /* ================= sound: music and effects synthesized live with Web Audio (no files) ================= */
+  const BPM = 124;
+  // vi–IV–I–V in C: Am, F, C, G (bass root + chord tones as MIDI notes)
+  const PROG = [{ root: 45, c: [57, 60, 64] }, { root: 41, c: [53, 57, 60] }, { root: 48, c: [60, 64, 67] }, { root: 43, c: [55, 59, 62] }];
+  const BASS = [1, 0, 1, 2, 0, 0, 1, 0, 1, 0, 1, 2, 0, 1, 1, 0];          // 1 = root, 2 = octave up
+  const ARP = [0, 1, 2, 3, 2, 1, 2, 3, 0, 1, 2, 3, 2, 3, 1, 2];
+  const HOOK = { 0: 4, 3: 3, 6: 2, 8: 3, 10: 4, 14: 2 };                   // step -> chord tone (top voice), played on bars 1 and 3
+  const SFX_GAP = { blip: .09, stamp: .07, miss: .09, ten: .12, press: .08, crack: .1, toss: .1, pop: .06, plink: .035 };
+  const mtof = n => 440 * Math.pow(2, (n - 69) / 12);
+  const audio = {
+    ctx: null, playing: false, last: {},
+    vol: store.get('gd-vol', .6), muted: store.get('gd-muted', false),
+    init(){
+      if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume(); return true; }
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      const ctx = this.ctx = new AC();
+      this.master = ctx.createGain();
+      const comp = ctx.createDynamicsCompressor();
+      comp.threshold.value = -10; comp.knee.value = 6; comp.ratio.value = 6; comp.attack.value = .003; comp.release.value = .15;
+      this.music = ctx.createGain(); this.music.gain.value = .36;
+      this.fx = ctx.createGain(); this.fx.gain.value = 1;
+      this.music.connect(comp); this.fx.connect(comp); comp.connect(this.master); this.master.connect(ctx.destination);
+      this.noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+      const d = this.noiseBuf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      this.apply(true);
+      return true;
+    },
+    apply(now){
+      if (!this.ctx) return;
+      this.master.gain.setTargetAtTime(this.muted ? 0 : this.vol * this.vol, this.ctx.currentTime, now ? .001 : .04);
+    },
+    // busy sounds are rate-limited so 30 lanes don't turn into noise
+    ok(key){
+      if (!this.ctx || this.muted || !this.vol) return false;
+      const t = this.ctx.currentTime, gap = SFX_GAP[key] ?? .02;
+      if (this.last[key] && t - this.last[key] < gap) return false;
+      this.last[key] = t; return true;
+    },
+    tone(f, dur, o = {}){
+      const ctx = this.ctx, t = o.t ?? ctx.currentTime + (o.at || 0);
+      const osc = ctx.createOscillator(), g = ctx.createGain(), peak = o.gain ?? .3, a = o.attack || .004;
+      osc.type = o.type || 'sine';
+      osc.frequency.setValueAtTime(f, t);
+      if (o.to) osc.frequency.exponentialRampToValueAtTime(o.to, t + dur);
+      g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+      let node = osc;
+      if (o.lp) { const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = o.lp; osc.connect(lp); node = lp; }
+      node.connect(g); g.connect(o.dest || this.fx);
+      osc.start(t); osc.stop(t + dur + .05);
+    },
+    noise(dur, o = {}){
+      const ctx = this.ctx, t = o.t ?? ctx.currentTime + (o.at || 0);
+      const src = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain(), peak = o.gain ?? .3;
+      src.buffer = this.noiseBuf;
+      f.type = o.type || 'highpass'; f.frequency.setValueAtTime(o.freq || 2000, t); f.Q.value = o.q || 1;
+      if (o.to) f.frequency.exponentialRampToValueAtTime(o.to, t + dur);
+      g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(peak, t + (o.attack || .003)); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+      src.connect(f); f.connect(g); g.connect(o.dest || this.fx);
+      src.start(t, Math.random() * .5); src.stop(t + dur + .05);
+    },
+    sfx(name){
+      if (!this.ok(name)) return;
+      const r = (a, b) => a + Math.random() * (b - a);
+      switch (name) {
+        case 'beep': this.tone(660, .14, { type: 'square', gain: .2, lp: 3000 }); break;
+        case 'go': this.tone(990, .35, { type: 'square', gain: .13, lp: 4000 }); this.tone(1320, .35, { type: 'square', gain: .08, at: .04, lp: 4000 }); break;
+        case 'blip': this.tone(r(1300, 1500), .07, { type: 'square', to: 2100, gain: .09, lp: 5000 }); break;
+        case 'stamp': this.tone(150, .14, { to: 55, gain: .3 }); this.noise(.05, { type: 'lowpass', freq: 1400, gain: .16 }); break;
+        case 'ten': [1047, 1319, 1568, 2093].forEach((f, i) => this.tone(f, .5, { type: 'triangle', gain: .11, at: i * .06 })); break;
+        case 'miss': this.tone(r(200, 240), .18, { type: 'square', to: 140, gain: .12, lp: 1200 }); break;
+        case 'press': this.noise(.22, { type: 'bandpass', freq: 1800, to: 500, q: .8, gain: .13 }); this.tone(95, .12, { gain: .2 }); break;
+        case 'crack': this.noise(.09, { freq: 3500, gain: .28 }); this.noise(.35, { type: 'bandpass', freq: 6000, to: 2500, q: 2, gain: .11, at: .03 }); this.tone(1900, .18, { type: 'triangle', to: 500, gain: .05 }); break;
+        case 'toss': this.noise(.45, { type: 'bandpass', freq: 500, to: 2400, q: 1.2, gain: .22 }); break;
+        case 'pop': this.tone(r(650, 750), .09, { to: 1300, gain: .24 }); this.tone(1400, .06, { type: 'triangle', gain: .07, at: .06 }); break;
+        case 'whoosh': this.noise(.9, { type: 'bandpass', freq: 300, to: 3000, q: .9, gain: .3 }); break;
+        case 'plink': this.tone(r(1400, 2000), .09, { type: 'triangle', gain: .15 }); break;
+        case 'click': this.tone(2200, .025, { type: 'square', gain: .14, lp: 6000 }); break;
+        case 'clank': this.tone(320, .09, { type: 'square', to: 210, gain: .15, lp: 2000 }); this.noise(.05, { freq: 2500, gain: .16 }); break;
+        case 'whiff': this.tone(420, .2, { type: 'triangle', to: 300, gain: .16 }); break;
+        case 'slip': this.tone(760, .38, { type: 'triangle', to: 190, gain: .22 }); break;
+        case 'boing': this.tone(260, .12, { to: 520, gain: .15 }); this.tone(520, .3, { to: 170, gain: .15, at: .11 }); break;
+        case 'thunk': this.tone(130, .18, { to: 65, gain: .32 }); this.noise(.06, { type: 'lowpass', freq: 900, gain: .14 }); break;
+        case 'flap': this.tone(500, .06, { type: 'square', to: 800, gain: .13, lp: 3000 }); break;
+        case 'riser': this.noise(1, { type: 'bandpass', freq: 400, to: 5000, q: 1.5, gain: .15, attack: .8 }); this.tone(220, 1, { type: 'sawtooth', to: 880, gain: .045, lp: 2500, attack: .8 }); break;
+        case 'boom': this.tone(70, .8, { to: 38, gain: .45 }); this.noise(.6, { type: 'lowpass', freq: 1800, to: 300, gain: .22 }); [1568, 2093, 2637, 3136].forEach((f, i) => this.tone(f, .9, { type: 'triangle', gain: .045, at: .05 + i * .05 })); break;
+        case 'moodUp': this.tone(620, .14, { type: 'triangle', to: 1180, gain: .13 }); break;
+        case 'moodDown': this.tone(520, .18, { type: 'triangle', to: 280, gain: .13 }); break;
+        case 'stop': this.tone(560, .4, { type: 'triangle', to: 110, gain: .15 }); this.tone(280, .4, { type: 'square', to: 70, gain: .05, lp: 1200 }); break;
+        case 'fanfare': [523, 659, 784, 1047].forEach((f, i) => this.tone(f, .22, { type: 'square', gain: .07, lp: 3500, at: i * .1 })); [523, 659, 784, 1047].forEach(f => this.tone(f, 1.1, { type: 'triangle', gain: .06, at: .42 })); break;
+      }
+    },
+    // claw motor: a soft electric whir (warm tone, slight wobble, a little filtered hiss) that spins up and winds down.
+    // Back-to-back moves keep one continuous hum instead of clicking on and off.
+    motor(on){
+      if (!this.ctx) return;
+      const t = this.ctx.currentTime, LEVEL = .022;
+      if (on) {
+        clearTimeout(this.motStop);
+        if (this.mot) {
+          const m = this.mot;
+          m.g.gain.cancelScheduledValues(t); m.g.gain.setTargetAtTime(LEVEL, t, .06);
+          m.o.frequency.cancelScheduledValues(t); m.o.frequency.setTargetAtTime(118, t, .08);
+          return;
+        }
+        const ctx = this.ctx;
+        const o = ctx.createOscillator(), o2 = ctx.createOscillator(), lfo = ctx.createOscillator(), lfoAmt = ctx.createGain();
+        const n = ctx.createBufferSource(), nf = ctx.createBiquadFilter(), ng = ctx.createGain();
+        const lp = ctx.createBiquadFilter(), g = ctx.createGain();
+        o.type = 'triangle'; o.frequency.setValueAtTime(80, t); o.frequency.setTargetAtTime(118, t, .08);
+        o2.type = 'sine'; o2.frequency.value = 236;
+        lfo.frequency.value = 7; lfoAmt.gain.value = 3; lfo.connect(lfoAmt); lfoAmt.connect(o.frequency);
+        n.buffer = this.noiseBuf; n.loop = true;
+        nf.type = 'bandpass'; nf.frequency.value = 700; nf.Q.value = .7; ng.gain.value = .35;
+        lp.type = 'lowpass'; lp.frequency.value = 900;
+        const o2g = ctx.createGain(); o2g.gain.value = .3;
+        o.connect(lp); o2.connect(o2g); o2g.connect(lp); n.connect(nf); nf.connect(ng); ng.connect(lp);
+        lp.connect(g); g.connect(this.fx);
+        g.gain.setValueAtTime(.0001, t); g.gain.setTargetAtTime(LEVEL, t, .06);
+        [o, o2, lfo, n].forEach(x => x.start(t));
+        this.mot = { o, o2, lfo, n, g };
+      } else if (this.mot) {
+        clearTimeout(this.motStop);
+        this.motStop = setTimeout(() => {
+          const m = this.mot; if (!m) return;
+          this.mot = null;
+          const t2 = this.ctx.currentTime;
+          m.g.gain.setTargetAtTime(.0001, t2, .08); m.o.frequency.setTargetAtTime(70, t2, .1);
+          [m.o, m.o2, m.lfo, m.n].forEach(x => x.stop(t2 + .6));
+        }, 140);
+      }
+    },
+    // poppy four-on-the-floor loop: kick, clap, hats, bouncy bass, arp, pad and a little hook
+    musicOn(){
+      if (!this.ctx) return;
+      if (this.playing) {
+        if (this.fading) {
+          clearTimeout(this.fadeT); this.fading = false;
+          const g = this.bus.gain, t = this.ctx.currentTime;
+          g.cancelScheduledValues(t); g.setValueAtTime(Math.max(g.value, .001), t); g.exponentialRampToValueAtTime(1, t + .6);
+        }
+        return;
+      }
+      this.playing = true; this.step = 0; this.nextT = this.ctx.currentTime + .1;
+      this.bus = this.ctx.createGain(); this.bus.connect(this.music);
+      const sixteenth = 60 / BPM / 4;
+      const tick = () => {
+        if (!this.playing) return;
+        while (this.nextT < this.ctx.currentTime + .15) { this.playStep(this.step, this.nextT, sixteenth); this.nextT += sixteenth; this.step++; }
+      };
+      this.timerId = setInterval(tick, 25); tick();
+    },
+    musicOff(fade = 7){
+      if (!this.playing || this.fading) return;
+      this.fading = true;
+      // an even fade in loudness (exponential in gain), with the beat still going underneath
+      const g = this.bus.gain, t = this.ctx.currentTime;
+      g.cancelScheduledValues(t); g.setValueAtTime(Math.max(g.value, .001), t); g.exponentialRampToValueAtTime(.001, t + fade);
+      this.fadeT = setTimeout(() => {
+        this.playing = false; this.fading = false; clearInterval(this.timerId);
+        this.bus.gain.setValueAtTime(0, this.ctx.currentTime); this.bus.disconnect();
+      }, fade * 1000 + 150);
+    },
+    playStep(s, t, len){
+      const bar = Math.floor(s / 16) % 4, i = s % 16, ch = PROG[bar], dest = this.bus;
+      if (i % 4 === 0) this.tone(150, .3, { to: 42, gain: .55, t, dest });                                       // kick
+      if (i === 4 || i === 12) { this.noise(.16, { type: 'bandpass', freq: 1600, q: .8, gain: .22, t, dest }); this.noise(.1, { type: 'bandpass', freq: 1200, gain: .12, t: t + .012, dest }); }  // clap
+      if (i % 4 === 2) this.noise(.12, { freq: 7000, gain: .07, t, dest });                                      // open hat
+      else if (i % 2) this.noise(.035, { freq: 8500, gain: .045, t, dest });                                    // closed hat
+      if (BASS[i]) this.tone(mtof(ch.root + (BASS[i] === 2 ? 12 : 0)), len * 1.6, { type: 'sawtooth', lp: 650, gain: .2, t, dest });
+      const arp = [ch.c[0] + 12, ch.c[1] + 12, ch.c[2] + 12, ch.c[0] + 24];
+      this.tone(mtof(arp[ARP[i]]), len * .9, { type: 'square', lp: 3000, gain: .035, t, dest });
+      if (i === 0) ch.c.forEach(n => this.tone(mtof(n), len * 15, { type: 'triangle', gain: .03, attack: .08, t, dest }));  // pad
+      if ((bar === 1 || bar === 3) && HOOK[i] != null) {
+        const top = [ch.c[0] + 24, ch.c[1] + 24, ch.c[2] + 24, ch.c[1] + 24, ch.c[2] + 24][HOOK[i]];
+        this.tone(mtof(top), len * 1.8, { type: 'triangle', gain: .06, t, dest });
+      }
+    }
+  };
+
+  /* clock (the running commentary log was removed; calls to say() are kept as quiet hooks) */
+  function say(){}
+  const B = n => `<b>${esc(n)}</b>`;
+  let clockT0 = 0, clockTimer = 0;
+  function setStatus(s){
+    const el = $('#status');
+    el.dataset.s = s;
+    el.textContent = { ready: 'Ready', live: 'Live', done: 'Finished' }[s];
+  }
+
+  /* ================= Gem Mint or Bust: grading lines, then the claw machine ================= */
+  const easeIO = k => k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+  const easeIn = k => k * k;
+  const linear = k => k;
+  function tween(ms, fn, ease = easeIO){
+    const g = gen;
+    return new Promise(res => {
+      const t0 = performance.now();
+      const f = now => { if (g !== gen) return; const k = Math.min(1, (now - t0) / ms); fn(ease(k)); k < 1 ? requestAnimationFrame(f) : res(); };
+      requestAnimationFrame(f);
+    });
+  }
+  const fmtClock = s => `${Math.floor(s / 60)}:${(s % 60).toFixed(1).padStart(4, '0')}`;
+  const ordinal = n => ['1st', '2nd', '3rd'][n - 1] || n + 'th';
+  // total misses the claw makes in a game, by game length
+  const clawFails = T => T <= 10 ? 0 : T <= 20 ? 1 : T <= 30 ? 2 : 3;
+  // hand out misses across grabs, starting with the final (winning) grab
+  function spreadFails(F, W){ const a = Array(W).fill(0); for (let i = 0; i < F; i++) a[W - 1 - (i % W)]++; return a; }
+  // weighted draw without replacement: returns [1st, 2nd, ...]
+  function weightedOrder(items, weightOf, k){
+    const pool = items.slice(), out = [];
+    while (out.length < k && pool.length) {
+      let r = Math.random() * pool.reduce((a, b) => a + weightOf(b), 0), idx = 0;
+      for (; idx < pool.length - 1; idx++) { r -= weightOf(pool[idx]); if (r <= 0) break; }
+      out.push(pool.splice(idx, 1)[0]);
+    }
+    return out;
+  }
+  // scale for a W x H scene in a stage w wide; in full screen it fills the space under the controls
+  const stageCard = $('.stage-card');
+  function fitBox(){
+    if (!stageCard.classList.contains('is-fs')) return { cap: 1.15, room: Math.max(320, innerHeight - 170) };
+    const cs = getComputedStyle(stageCard);
+    return { cap: Infinity, room: Math.max(200, innerHeight - $('.stage-head').offsetHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 10) };
+  }
+  const GL_PAD = 16;   // padding inside the grading box, in screen pixels
+  function fitK(w, W, H, pad = 0){ const { cap, room } = fitBox(); return Math.min(cap, (w - 2 * pad - 2) / W, (room - 2 * pad) / H); }
+  // how many columns of grading lines show every line as large as possible in the space available
+  function bestCols(n){
+    const w = stage.clientWidth || 720;
+    let cols = 1, best = 0;
+    for (let c = 1; c <= 6; c++) {
+      const eff = fitK(w, GL.W, (c > 1 ? 84 * Math.min(1, 2 / c) : GL.HEAD) + Math.ceil(n / c) * GL.LH / c, GL_PAD) / c;
+      if (eff > best * 1.04) { best = eff; cols = c; }
+    }
+    return cols;
+  }
+  function fitScene(wrap, scene, W, H, cam = 0, pad = 0){
+    // the frame hugs the scene and sits centered in the stage
+    const k = fitK(stage.clientWidth, W, H, pad);
+    scene.style.transform = `scale(${k}) translateX(${-cam}px)`;
+    scene.style.left = '0px';
+    wrap.style.width = (W * k + wrap.offsetWidth - wrap.clientWidth) + 'px'; wrap.style.marginInline = 'auto';
+    wrap.style.height = (H * k) + 'px';
+  }
+
+  const GL = { W: 720, HEAD: 60, LH: 90, BELT: 76, TRAY: 82, X: { tray: 140, inspect: 236, grade: 352, slab: 470, qc: 578, vault: 668 } };
+  // the claw machine is drawn flat, front-on; its rig is shifted right by RIG.shift inside the close-up scene
+  const RIG = { shift: 40, Z: 0 };
+  const project = (x, y) => ({ x: x + RIG.shift, y });   // machine (rig) point -> scene point
+  const handAt = (x, y) => ({ x, y });                   // the player stands in the rig, so hands aim straight at the controls
+  const FC = { W: 820, H: 470, RAIL: 88, CHUTE: 195, MINX: 200, MAXX: 414 };
+  const SKIN = ['#e8b58f', '#a8704a'];
+  // chance of each grade, as weights for grades 1..10 (they sum to 105, so a 10 is about 38%)
+  const GRADE_W = [4, 4, 4, 5, 5, 5, 8, 10, 20, 40];
+  const BASE10 = GRADE_W[9] / GRADE_W.reduce((a, b) => a + b, 0);
+  // mod = the grader's mood in percentage points (e.g. +.3); overtime adds 17 points so games don't stall
+  function rollGrade(mod = 0, overtime = false){
+    const p10 = Math.min(.9, Math.max(.05, BASE10 + mod + (overtime ? .17 : 0)));
+    if (Math.random() < p10) return 10;
+    let r = Math.random() * GRADE_W.slice(0, 9).reduce((a, b) => a + b, 0);
+    for (let g = 1; g <= 9; g++) { r -= GRADE_W[g - 1]; if (r <= 0) return g; }
+    return 9;
+  }
+  // crew moods: 60% normal, 25% a mild one (sleepy / bored), 15% a strong one (happy / angry)
+  // mod: the grader's effect on the chance of a 10 · insp: the inspector's inspection time (2 = twice as long;
+  // 0 = inspects on the fly: a quick loupe pass while the card keeps rolling, so the lane never waits)
+  const MOODS = {
+    sleepy: { mod: .15, insp: 1.5, label: 'sleepy' },
+    happy: { mod: .30, insp: 0, label: 'happy, headphones on' },
+    bored: { mod: -.15, insp: .5, label: 'bored' },
+    angry: { mod: -.30, insp: 2, label: 'angry' }
+  };
+  const CLOCK_ICON = '<svg viewBox="0 0 12 13" aria-hidden="true"><circle cx="6" cy="7.5" r="4.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6 7.5V5.2M4.4 1.2h3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+  function rollMood(){
+    const r = Math.random();
+    if (r < .6) return null;
+    if (r < .85) return Math.random() < .5 ? 'sleepy' : 'bored';
+    return Math.random() < .5 ? 'happy' : 'angry';
+  }
+  const CRACK = `<svg class="crack" viewBox="0 0 30 40" preserveAspectRatio="none" aria-hidden="true"><path d="M18 0 L15 11 L20 16 L12 25 L16 31 L11 40 M15 11 L7 13 M20 16 L29 18 M12 25 L3 27" stroke="#fff" stroke-width="1.1" fill="none"/></svg>`;
+  const loupeSVG = sk => `<svg width="26" height="26" viewBox="0 0 36 36" aria-hidden="true"><path d="M20 20 L30 30" stroke="#8a8a90" stroke-width="4" stroke-linecap="round"/><circle cx="13" cy="13" r="10" fill="rgba(170,210,255,.22)" stroke="#f8c33a" stroke-width="3"/><path d="M8 10 q3-4 8-3" stroke="rgba(255,255,255,.6)" stroke-width="1.5" fill="none"/><circle cx="30" cy="30" r="5.5" fill="${sk}"/></svg>`;
+  const stampSVG = sk => `<svg width="16" height="24" viewBox="0 0 30 44" aria-hidden="true"><circle cx="15" cy="7" r="6" fill="#f8c33a"/><rect x="12" y="10" width="6" height="18" fill="#8a8a90"/><circle cx="15" cy="21" r="6" fill="${sk}"/><rect x="3" y="28" width="24" height="9" rx="2" fill="#f8c33a"/><rect x="4" y="37" width="22" height="7" rx="1" fill="#e04a44"/></svg>`;
+  // claw machine art: marquee name and orange line doodles for the back wall and the cabinet
+  const MACHINE_LOGO = '<svg viewBox="0 0 22 24" aria-hidden="true"><path d="M11 1l9.5 5.5v11L11 23 1.5 17.5v-11z" fill="#f2a67c"/><path d="M11 7.4l4.4 2.6v5L11 17.6 6.6 15v-5z" fill="#fffaf2"/></svg>beezie';
+  const DOODLE_BACK = `<svg viewBox="0 0 288 222" preserveAspectRatio="none" aria-hidden="true" fill="none" stroke="#c58a2a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity=".5">
+    <path d="M40 22l13.9 8v16L40 54l-13.9-8V30z"/><path d="M40 31l6 3.5v7L40 45l-6-3.5v-7z"/>
+    <path d="M118 20l4.1 8.9 9.7 1.1-7.2 6.6 2 9.6-8.6-4.9-8.6 4.9 2-9.6-7.2-6.6 9.7-1.1z"/>
+    <path d="M190 54h36a9 9 0 0 0 0-18 12 12 0 0 0-22-5 9 9 0 0 0-14 8 8 8 0 0 0 0 15z"/>
+    <path d="M36 112c10-14 20 6 30-8s20 6 30-8"/><path d="M90 90l7 5-8 4"/>
+    <path d="M136 84h28l8 9-22 24-22-24z"/><path d="M128 93h44M142 93l8 24 8-24"/>
+    <rect x="232" y="80" width="26" height="36" rx="3" transform="rotate(12 245 98)"/><rect x="236" y="86" width="18" height="15" rx="1.5" transform="rotate(12 245 98)"/>
+    <path d="M28 126l-8 16h8l-6 16 16-20h-9l7-12z"/>
+    <path d="M180 170h44l-7 10h-30z"/><path d="M202 170v-34l18 26h-18"/><path d="M200 138l-14 22h14"/>
+    <path d="M246 196l4-16 8 8 7-12 7 12 8-8 4 16z"/>
+    <path d="M60 206c30-20 60 10 90-10" stroke-dasharray="2 5"/>
+    <path d="M258 26v10M253 31h10M84 18v8M80 22h8M176 66v8M172 70h8M18 78v8M14 82h8M110 150v8M106 154h8"/>
+  </svg>`;
+  const DOODLE_BODY = `<svg viewBox="0 0 308 116" preserveAspectRatio="none" aria-hidden="true" fill="none" stroke="#c4902f" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity=".5">
+    <path d="M8 18l6 10-6 10 6 10-6 10"/>
+    <path d="M250 18l8.7 5v10L250 38l-8.7-5V23z"/>
+    <path d="M288 64l2.6 5.6 6.1.7-4.5 4.1 1.2 6-5.4-3.1-5.4 3.1 1.2-6-4.5-4.1 6.1-.7z"/>
+    <path d="M150 100c10-10 24-10 34 0"/><path d="M180 94l5 6-8 2"/>
+    <path d="M216 108h26a7 7 0 0 0 0-14 9 9 0 0 0-16-4 7 7 0 0 0-10 6 6 6 0 0 0 0 12z"/>
+    <path d="M110 70v8M106 74h8M232 64v8M228 68h8M16 96v8M12 100h8"/>
+  </svg>`;
+  const SIDE_PANEL = `<svg viewBox="0 0 40 234" aria-hidden="true" font-family="Inter, system-ui, sans-serif" font-weight="800" text-anchor="middle">
+    <rect x="7" y="22" width="26" height="15" rx="4" fill="#e0484a"/><text x="20" y="32" font-size="6" fill="#fff">1 PLAY</text>
+    <rect x="7" y="48" width="26" height="22" rx="3" fill="#2c3350"/><rect x="10" y="58" width="20" height="3" rx="1.5" fill="#0b0e1a"/><circle cx="29" cy="52.5" r="1.6" fill="#5df59d"/>
+  </svg>`;
+  /* ================= claw player art: a storybook kid with soft painted shading ================= */
+  // Front figures are drawn in a 300 x 600 box (feet on y 590); the in-game pose in the same box, turned to face left.
+  const P_INK = '#5c3b28', P_SH = 'rgba(120,58,26,.3)', P_HL = 'rgba(255,250,236,.5)', P_BLUSH = '#e0675e';
+  let pUid = 0;
+  const pMix = (a, b, t) => '#' + [1, 3, 5].map(k => Math.round(parseInt(a.slice(k, k + 2), 16) * (1 - t) + parseInt(b.slice(k, k + 2), 16) * t).toString(16).padStart(2, '0')).join('');
+  function pKit(){
+    const defs = [], nid = p => `${p}${++pUid}`, soft = nid('s');
+    defs.push(`<filter id="${soft}" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3.2"/></filter>`);
+    const st = (w, op = .9) => `stroke="${P_INK}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round" stroke-opacity="${op}"`;
+    return {
+      defs, soft,
+      // a filled shape with soft painted shadows (and lights) clipped inside it, then a thin brown pencil line
+      piece(d, fill, shades = [], extra = '', w = 1.8, lights = []){
+        const id = nid('c');
+        let inner = '';
+        if (shades.length) inner += `<g filter="url(#${soft})">${shades.map(s => `<path d="${s}" fill="${P_SH}"/>`).join('')}</g>`;
+        if (lights.length) inner += `<g filter="url(#${soft})">${lights.map(s => `<path d="${s}" fill="${P_HL}"/>`).join('')}</g>`;
+        inner += extra;
+        if (inner) defs.push(`<clipPath id="${id}"><path d="${d}"/></clipPath>`);
+        return `<path d="${d}" fill="${fill}"/>${inner ? `<g clip-path="url(#${id})">${inner}</g>` : ''}${w ? `<path d="${d}" fill="none" ${st(w)}/>` : ''}`;
+      },
+      line: (d, w = 1.2, op = .7) => `<path d="${d}" fill="none" ${st(w, op)}/>`,
+      stroke: (d, c, w, op = 1) => `<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" opacity="${op}"/>`,
+      blur: inner => `<g filter="url(#${soft})">${inner}</g>`,
+      stripes(base, stripe){
+        const id = nid('p');
+        defs.push(`<pattern id="${id}" width="20" height="13" patternUnits="userSpaceOnUse"><rect width="20" height="13" fill="${base}"/><rect width="20" height="5.5" fill="${stripe}"/></pattern>`);
+        return `url(#${id})`;
+      },
+      // the whole figure: lines wobble a little like pencil, and a fine paper grain sits on the paint
+      paint(){
+        const id = nid('f');
+        defs.push(`<filter id="${id}" x="-6%" y="-4%" width="112%" height="108%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4" result="w"/><feDisplacementMap in="SourceGraphic" in2="w" scale="3.2" xChannelSelector="R" yChannelSelector="G" result="d"/><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="9" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 .38  0 0 0 0 .22  0 0 0 0 .1  .4 0 0 0 -.17" result="g"/><feComposite in="g" in2="d" operator="in" result="gi"/><feMerge><feMergeNode in="d"/><feMergeNode in="gi"/></feMerge></filter>`);
+        return id;
+      }
+    };
+  }
+
+  // the kid's outfits; skin, hair and eye colors change with them. The game would pick one per round.
+  const P_LOOKS = [
+    { name: 'Rolled shirt, suspenders, olive shorts', short: 'Suspenders', skin: '#f3c3a0', hair: '#a5582d', eyes: '#3f97a0', freckles: true,
+      shirt: '#ede7c8', collar: true, straps: '#9a5530', shorts: '#7c7a4b', socks: '#e9e2c7', shoes: '#7a4128' },
+    { name: 'Sweater vest, brown shorts', short: 'Sweater vest', skin: '#f6cdab', hair: '#d6a24c', eyes: '#4a7fb8', freckles: true,
+      shirt: '#f5f2e9', collar: true, vest: '#d49a34', shorts: '#875a3c', socks: '#f1ece1', shoes: '#4b3326' },
+    { name: 'Red sweater, navy shorts', short: 'Red sweater', skin: '#d9a07a', hair: '#2e231d', eyes: '#6b4528',
+      shirt: '#c4473a', shorts: '#3f4a66', socks: '#efe8d8', shoes: '#6b3a22' },
+    { name: 'Striped tee, denim overalls', short: 'Overalls', skin: '#9c6646', hair: '#231a15', eyes: '#3b2a20',
+      shirt: '#f2ede0', stripe: '#3f6fa8', bib: '#5b80ae', straps: '#5b80ae', shorts: '#5b80ae', socks: '#f2ede0', shoes: '#5a3524' }
+  ];
+  const pSleeve = (K, o) => o.stripe ? K.stripes(o.shirt, o.stripe) : o.shirt;
+
+  // tousled hair: [behind the head, the top and fringe, painted shadow, light, strand lines, flyaways] — front and turned views
+  const P_HAIR = {
+    front: {
+      back: 'M84 112 C76 72 100 26 150 22 C200 18 226 60 218 112 C214 100 208 92 202 88 L98 88 C92 94 88 102 84 112Z',
+      top: 'M88 110 C80 96 78 80 84 66 C80 56 84 44 94 38 C96 28 106 20 118 20 C126 12 140 10 150 16 C160 10 176 12 184 20 C198 20 210 30 212 42 C222 48 226 62 220 74 C226 86 224 100 216 110 C212 100 206 94 198 90 C198 98 194 104 188 106 C188 96 182 88 174 86 C172 96 166 100 158 102 C158 92 152 86 144 84 C140 92 132 96 122 96 C124 90 122 84 118 82 C112 88 106 92 98 92 C100 98 98 104 94 108 C92 106 90 108 88 110Z',
+      shade: ['M180 14 C210 22 230 52 220 104 L216 110 C208 84 200 62 186 48Z', 'M84 104 C120 76 180 76 222 102 L222 114 L84 114Z'],
+      light: ['M112 30 C130 20 160 16 186 24 C170 28 140 32 116 42Z'],
+      lines: ['M118 26 C122 38 126 52 126 66', 'M150 20 C152 36 154 52 152 70', 'M182 26 C186 40 188 54 186 70', 'M96 50 C100 60 104 70 106 80', 'M206 46 C210 58 212 70 210 84'],
+      shine: ['M120 34 C130 28 144 24 158 25', 'M166 25 C176 25 186 28 194 33'],
+      fly: ['M150 16 C148 8 143 4 137 4', 'M212 42 C220 38 228 39 233 43'],
+      tufts: ['M144 18 C142 8 148 0 158 -2 C154 6 154 12 158 18Z', 'M218 66 C226 66 232 70 234 78 C228 76 222 76 218 80Z', 'M84 70 C76 70 70 74 68 82 C74 80 80 80 84 84Z']
+    },
+    turned: {
+      back: 'M92 112 C82 70 108 24 160 20 C212 16 238 60 228 116 C226 132 220 146 212 156 C212 140 208 126 200 116 L100 96 C96 100 94 106 92 112Z',
+      top: 'M98 106 C90 94 88 80 92 68 C86 58 90 44 100 38 C102 28 112 20 124 20 C132 12 146 10 156 16 C166 10 182 12 190 20 C204 20 216 30 218 42 C228 48 232 62 228 74 C234 88 232 104 224 116 C220 104 214 96 206 92 C206 100 202 106 196 110 C196 100 190 92 182 88 C180 98 174 102 166 104 C166 94 160 88 152 86 C148 94 140 98 130 98 C132 92 130 86 126 84 C120 90 114 94 106 94 C108 100 104 104 100 108Z',
+      shade: ['M184 14 C216 22 238 54 228 110 L224 116 C216 88 206 64 190 50Z', 'M96 102 C130 78 190 78 228 106 L228 120 L96 120Z'],
+      light: ['M114 30 C132 20 160 16 186 24 C170 28 142 34 118 44Z'],
+      lines: ['M122 26 C126 38 130 52 130 68', 'M154 20 C156 36 158 52 156 72', 'M188 26 C192 40 194 56 192 74', 'M214 48 C218 60 220 74 218 90'],
+      shine: ['M124 34 C134 28 148 24 162 25', 'M170 25 C182 25 194 29 202 34'],
+      fly: ['M156 16 C154 8 149 4 143 4', 'M218 42 C226 38 234 39 239 43'],
+      tufts: ['M150 18 C148 8 154 0 164 -2 C160 6 160 12 164 18Z', 'M230 82 C238 84 244 90 246 98 C238 94 232 94 226 96Z', 'M92 72 C84 72 78 76 76 84 C82 82 88 82 92 86Z']
+    }
+  };
+  const pHairTop = (K, o, H) => H.tufts.map(d => K.piece(d, shade(o.hair, .92), [], '', 1.6)).join('') + K.piece(H.top, o.hair, H.shade, H.lines.map(d => K.stroke(d, shade(o.hair, .62), 1.4, .7)).join('') + H.shine.map(d => K.stroke(d, pMix(o.hair, '#ffffff', .4), 2, .75)).join(''), 1.8, H.light)
+    + H.fly.map(d => K.stroke(d, shade(o.hair, .72), 1.6, .9)).join('');
+
+  const pEllipse = (cx, cy, rx, ry) => `M${cx - rx} ${cy} a${rx} ${ry} 0 1 0 ${2 * rx} 0 a${rx} ${ry} 0 1 0 ${-2 * rx} 0Z`;
+  // a big round eye looking toward (dx, dy); shut = a happy closed arc
+  function pEye(K, o, cx, cy, rx, ry, dx, dy, shut){
+    if (shut) return K.stroke(`M${cx - rx} ${cy + 3} C${cx - rx * .6} ${cy - ry * .9} ${cx + rx * .6} ${cy - ry * .9} ${cx + rx} ${cy + 3}`, P_INK, 3, .95);
+    const ix = cx + dx, iy = cy + dy, ir = Math.min(rx, ry) * .74;
+    const iris = `<circle cx="${ix}" cy="${iy}" r="${ir}" fill="${o.eyes}" stroke="${shade(o.eyes, .6)}" stroke-width="1.2"/><circle cx="${ix + .5}" cy="${iy + .5}" r="${ir * .5}" fill="#1d2428"/>`
+      + `<circle cx="${ix - ir * .38}" cy="${iy - ir * .42}" r="${ir * .34}" fill="#fff"/><circle cx="${ix + ir * .42}" cy="${iy + ir * .44}" r="${ir * .16}" fill="#fff" opacity=".9"/>`
+      + K.blur(`<path d="M${cx - rx - 4} ${cy - ry - 4} H${cx + rx + 4} V${cy - ry * .45} H${cx - rx - 4}Z" fill="rgba(110,60,30,.25)"/>`);
+    return K.piece(pEllipse(cx, cy, rx, ry), '#fbf7ee', [], iris, 1.1)
+      + K.stroke(`M${cx - rx - 1} ${cy - 1} C${cx - rx} ${cy - ry * 1.36} ${cx + rx} ${cy - ry * 1.36} ${cx + rx + 1} ${cy - 1}`, P_INK, 2.6, .95);
+  }
+  // face details for an expression: 'normal' (a small smile), 'happy' (eyes shut, big grin) or 'sad' (brows up, frown)
+  function pFace(K, o, exp, turned){
+    const brow = shade(o.hair, .7);
+    const B = turned
+      ? { normal: ['M104 102 C108 97 116 96 122 98', 'M146 98 C154 94 166 95 174 101'], happy: ['M104 97 C108 92 116 91 122 93', 'M146 93 C154 89 166 90 174 96'], sad: ['M104 99 C110 99 116 96 122 92', 'M146 92 C154 96 164 99 174 99'] }
+      : { normal: ['M112 100 C118 94 128 93 136 96', 'M166 96 C174 93 184 94 190 100'], happy: ['M112 95 C118 89 128 88 136 91', 'M166 91 C174 88 184 89 190 95'], sad: ['M112 98 C120 98 128 94 136 89', 'M166 89 C172 94 180 98 190 98'] };
+    const eyes = turned ? [[116, 122, 8, 13], [160, 122, 11.5, 13.5]] : [[126, 120, 11.5, 13.5], [176, 120, 11.5, 13.5]];
+    const look = turned ? [-3.5, 1.5] : [.5, 1.5], sadLook = turned ? [-3, 4] : [0, 4];
+    let s = B[exp].map(d => K.stroke(d, brow, 3.2)).join('');
+    s += eyes.map(([x, y, rx, ry]) => pEye(K, o, x, y, rx, ry, ...(exp === 'sad' ? sadLook : look), exp === 'happy')).join('');
+    const M = turned
+      ? { normal: K.line('M116 162 C122 167 132 167 140 160', 2.2, .95) + K.line('M140 160 L142 157', 1.6, .7),
+          happy: `<path d="M110 157 C116 174 136 175 144 155 C132 160 120 160 110 157Z" fill="#8e3a32" stroke="${P_INK}" stroke-width="1.6" stroke-linejoin="round"/><path d="M120 167 C126 163 134 163 138 166 C132 171 124 171 120 167Z" fill="#e0786c"/>`,
+          sad: K.line('M118 168 C124 162 134 162 140 168', 2.2, .95) }
+      : { normal: K.line('M140 160 C148 166 160 165 168 157', 2.2, .95) + K.line('M168 157 L170 154', 1.6, .7),
+          happy: `<path d="M136 155 C142 172 164 173 172 154 C160 158 148 158 136 155Z" fill="#8e3a32" stroke="${P_INK}" stroke-width="1.6" stroke-linejoin="round"/><path d="M146 166 C152 162 160 162 164 166 C158 170 150 170 146 166Z" fill="#e0786c"/>`,
+          sad: K.line('M142 165 C148 159 160 159 166 165', 2.2, .95) };
+    return s + M[exp];
+  }
+  // nose, rosy cheeks and freckles (the same for every expression)
+  function pCheeks(K, o, turned){
+    const nose = pMix(o.skin, P_BLUSH, .32), fr = shade(o.skin, .7);
+    const [nx, ny] = turned ? [102, 144] : [153, 141];
+    const cheeks = turned ? [[162, 150, 14, 8], [106, 152, 7, 6]] : [[116, 148, 14, 8], [190, 148, 14, 8]];
+    const dots = turned ? [[124, 146], [128, 151], [120, 151], [148, 146], [153, 150], [145, 151]] : [[138, 146], [142, 151], [134, 151], [166, 146], [170, 151], [162, 151]];
+    return K.blur(cheeks.map(([x, y, rx, ry]) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${P_BLUSH}" opacity=".34"/>`).join(''))
+      + (o.freckles ? dots.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.2" fill="${fr}" opacity=".6"/>`).join('') : '')
+      + `<ellipse cx="${nx}" cy="${ny}" rx="8.5" ry="7.5" fill="${nose}" stroke="${P_INK}" stroke-width="1.1" stroke-opacity=".45"/><ellipse cx="${nx - 2.5}" cy="${ny - 3}" rx="3" ry="2" fill="#fff" opacity=".55"/>`;
+  }
+
+  /* ---- arms: rolled (or short) sleeve, bare forearm, a chubby hand ---- */
+  const P_ARM = [96, 92];   // upper arm, forearm
+  // two-bone arm: the hand reaches T; the elbow hangs low (out = 0) or points to a side (-1 left, +1 right)
+  function pIK(S, T, a, b, out = 0){
+    const dx = T.x - S.x, dy = T.y - S.y, d = Math.hypot(dx, dy) || 1, r = Math.min(a + b - .5, Math.max(Math.abs(a - b) + .5, d));
+    const W = { x: S.x + dx / d * r, y: S.y + dy / d * r };
+    const base = Math.atan2(dy, dx), off = Math.acos(Math.min(1, Math.max(-1, (a * a + r * r - b * b) / (2 * a * r))));
+    const E1 = { x: S.x + a * Math.cos(base + off), y: S.y + a * Math.sin(base + off) }, E2 = { x: S.x + a * Math.cos(base - off), y: S.y + a * Math.sin(base - off) };
+    return { E: out ? (out * E1.x >= out * E2.x ? E1 : E2) : (E1.y >= E2.y ? E1 : E2), W };
+  }
+  function pArm(S, T, o, opt = {}){
+    const K = pKit(), [a, b] = P_ARM, hand = opt.hand !== false;
+    const ux = T.x - S.x, uy = T.y - S.y, ul = Math.hypot(ux, uy) || 1;
+    const { E, W } = pIK(S, hand ? { x: T.x - ux / ul * 15, y: T.y - uy / ul * 15 } : T, a, b, opt.out || 0);
+    const dir = (p, q) => { const x = q.x - p.x, y = q.y - p.y, l = Math.hypot(x, y) || 1; return { x: -y / l, y: x / l, ux: x / l, uy: y / l }; };
+    const n1 = dir(S, E), n2 = dir(E, W), f = p => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`;
+    const at = (p, n, w, sg) => ({ x: p.x + n.x * w / 2 * sg, y: p.y + n.y * w / 2 * sg }), go = (p, n, t) => ({ x: p.x + n.ux * t, y: p.y + n.uy * t });
+    const tube = (P, Q, n, w1, w2) => `M${f(at(P, n, w1, 1))} L${f(at(Q, n, w2, 1))} L${f(at(Q, n, w2, -1))} L${f(at(P, n, w1, -1))}Z`;
+    // the half of a limb facing down and right is in shadow
+    const dark = (P, Q, n, w1, w2) => { const sg = n.x + n.y > 0 ? 1 : -1; return `M${f(P)} L${f(at(P, n, w1 * 1.3, sg))} L${f(at(Q, n, w2 * 1.3, sg))} L${f(Q)}Z`; };
+    const sl = pSleeve(K, o), cap = go(S, n1, -14);
+    let s = '';
+    if (o.stripe) s += K.piece(tube(S, go(E, n1, 4), n1, 22, 19), o.skin, [dark(S, E, n1, 22, 19)], '', 1.6);
+    s += K.piece(tube(go(E, n2, -5), W, n2, 19, 15), o.skin, [dark(E, W, n2, 19, 15)], '', 1.6);
+    if (hand) {
+      const ang = Math.atan2(n2.uy, n2.ux) * 180 / Math.PI;
+      s += `<g transform="translate(${f(go(W, n2, 13))}) rotate(${ang.toFixed(1)}) scale(1.75)">`
+        + K.piece('M-8 -8 C2 -11 11 -8 14 -2 C16 4 11 9 2 9 C-5 9 -9 6 -9 0Z', o.skin, ['M-10 3 C-2 9 8 9 15 2 L17 13 L-11 13Z'], K.line('M7 -4 L13 -2.5 M8 .5 L14 1.5 M7 4.5 L12 5.5', .8, .4), 1.2)
+        + K.piece('M-1 -8 C2 -14 9 -14 10 -9 C8 -7 4 -6 1 -6Z', o.skin, [], '', 1.1) + '</g>';
+    }
+    if (o.stripe) {
+      const Sx = go(S, n1, 36);
+      s += K.piece(`M${f(at(S, n1, 40, 1))} L${f(at(Sx, n1, 34, 1))} L${f(at(Sx, n1, 34, -1))} L${f(at(S, n1, 40, -1))} Q${f(cap)} ${f(at(S, n1, 40, 1))}Z`, sl, [dark(S, Sx, n1, 40, 34)]);
+    } else {
+      const E2 = go(E, n1, 2), c0 = go(E, n1, -9), c1 = go(E, n1, 5);
+      s += K.piece(`M${f(at(S, n1, 40, 1))} L${f(at(E2, n1, 33, 1))} L${f(at(E2, n1, 33, -1))} L${f(at(S, n1, 40, -1))} Q${f(cap)} ${f(at(S, n1, 40, 1))}Z`, sl, [dark(S, E2, n1, 40, 33)],
+        K.line(`M${f(go(at(S, n1, 16, -1), n1, 16))} Q${f(go(S, n1, 34))} ${f(go(at(S, n1, 10, 1), n1, 50))}`, 1, .35));
+      // the sleeve rolled up into a fat cuff at the elbow
+      s += K.piece(`M${f(at(c0, n1, 37, 1))} L${f(at(c1, n1, 36, 1))} Q${f(go(c1, n1, 5))} ${f(at(c1, n1, 36, -1))} L${f(at(c0, n1, 37, -1))} Q${f(go(c0, n1, -4))} ${f(at(c0, n1, 37, 1))}Z`, sl,
+        [dark(c0, c1, n1, 37, 36)], K.line(`M${f(at(go(E, n1, -2), n1, 34, 1))} L${f(at(go(E, n1, -2), n1, 34, -1))}`, 1, .4));
+    }
+    return `<defs>${K.defs.join('')}</defs>${s}`;
+  }
+
+  /* ---- clothes and legs ---- */
+  // the shirt (or sweater / tee); x0 is its left edge, so the turned body can be narrower
+  function pShirt(K, o, turned){
+    const fill = o.stripe ? K.stripes(o.shirt, o.stripe) : o.shirt;
+    const T = turned ? 'M112 212 C118 200 138 194 160 194 C182 194 200 200 206 212 C210 234 212 270 210 308 L112 308 C108 270 108 234 112 212Z'
+      : 'M100 210 C104 198 124 192 150 192 C176 192 196 198 200 210 C204 230 206 266 204 306 L96 306 C94 266 96 230 100 210Z';
+    const px = turned ? 140 : 150;
+    let s = K.piece(T, fill, turned ? ['M188 198 C202 206 210 234 210 308 L190 308 C194 262 194 222 188 198Z', 'M124 198 C146 214 166 214 188 198 L188 216 L124 216Z']
+        : ['M184 196 C200 204 206 232 206 306 L186 306 C190 262 190 222 184 196Z', 'M118 196 C138 212 162 212 182 196 L182 214 L118 214Z'],
+      K.line(turned ? 'M126 240 C128 262 130 282 128 300' : 'M118 240 C122 262 124 282 122 300', 1, .4) + K.line(turned ? 'M190 236 C186 258 186 282 188 300' : 'M182 236 C178 258 178 282 180 300', 1, .4), 1.8,
+      [turned ? 'M116 216 C120 206 128 202 134 202 C130 232 126 262 124 300 L114 300 C112 262 112 232 116 216Z' : 'M106 214 C110 204 120 200 128 200 C122 230 118 260 116 300 L104 300 C102 260 102 230 106 214Z']);
+    if (o.collar) {
+      s += K.line(`M${px} 214 L${px - .5} 304`, 1.1, .6) + [234, 258, 282].map(y => `<circle cx="${px + 1.5}" cy="${y}" r="2.6" fill="${shade(o.shirt, .78)}" stroke="${P_INK}" stroke-width=".8" stroke-opacity=".6"/>`).join('');
+      s += K.piece(`M${px - 12} ${turned ? 194 : 192} L${px} 214 L${px + 12} ${turned ? 194 : 192}Z`, o.skin, [`M${px - 12} 192 L${px + 12} 192 L${px} 206Z`]);
+    } else {
+      s += K.piece(`M${px - 18} ${turned ? 194 : 192} C${px - 12} 200 ${px + 12} 200 ${px + 18} ${turned ? 194 : 192}Z`, o.skin, [`M${px - 18} 190 L${px + 18} 190 L${px} 198Z`], '', 0)
+        + K.piece(`M${px - 22} ${turned ? 193 : 191} C${px - 16} 208 ${px + 16} 208 ${px + 22} ${turned ? 193 : 191} C${px + 16} 199 ${px - 16} 199 ${px - 22} ${turned ? 193 : 191}Z`, o.stripe ? o.stripe : shade(o.shirt, .9), [], '', 1.4);
+    }
+    return s;
+  }
+  function pCollar(K, o, turned){
+    if (!o.collar) return '';
+    const x = turned ? 140 : 150, y = turned ? 194 : 192;
+    return K.piece(`M${x - 13} ${y - 2} C${x - 20} ${y + 6} ${x - 26} ${y + 14} ${x - 30} ${y + 22} C${x - 20} ${y + 25} ${x - 9} ${y + 24} ${x - 2} ${y + 18} L${x} ${y + 7}Z`, o.shirt, [`M${x - 13} ${y - 2} L${x} ${y + 7} L${x - 2} ${y + 18} C${x - 6} ${y + 14} ${x - 10} ${y + 8} ${x - 13} ${y - 2}Z`])
+      + K.piece(`M${x + 13} ${y - 2} C${x + 20} ${y + 6} ${x + 26} ${y + 14} ${x + 30} ${y + 22} C${x + 20} ${y + 25} ${x + 9} ${y + 24} ${x + 2} ${y + 18} L${x} ${y + 7}Z`, o.shirt, [`M${x + 13} ${y - 2} C${x + 16} ${y + 8} ${x + 20} ${y + 16} ${x + 30} ${y + 22} L${x + 26} ${y + 24} C${x + 18} ${y + 18} ${x + 14} ${y + 8} ${x + 13} ${y - 2}Z`]);
+  }
+  const P_SHORTS = {
+    front: 'M96 316 L204 316 C210 350 216 400 220 452 L157 456 C156 430 154 410 150 394 C146 410 144 430 143 456 L80 452 C84 400 90 350 96 316Z',
+    turned: 'M110 320 L212 320 C216 352 220 400 222 450 L166 454 C165 430 163 410 160 394 C156 410 152 432 150 456 L88 450 C92 400 102 352 110 320Z'
+  };
+  // baggy high-waisted shorts with big rolled cuffs; dx shifts the whole thing for the turned body
+  function pShorts(K, o, turned){
+    const c = o.shorts;
+    const body = turned ? P_SHORTS.turned : P_SHORTS.front;
+    let s = K.piece(body, c, turned
+        ? ['M160 394 C156 410 152 432 150 456 L136 456 C140 428 148 404 160 378Z', 'M206 330 C214 370 218 410 222 450 L206 452 C204 410 202 370 198 330Z', 'M110 320 L212 320 L212 338 L110 338Z', 'M90 420 C106 430 128 436 150 438 L150 456 L88 450Z']
+        : ['M150 394 C146 410 144 430 143 456 L128 456 C132 428 140 402 150 378Z', 'M198 326 C208 370 214 410 220 452 L202 454 C200 410 198 370 192 326Z', 'M96 316 L204 316 L204 334 L96 334Z', 'M84 420 C100 430 120 436 143 438 L143 456 L80 452Z'],
+      (turned ? K.line('M126 352 C130 390 134 420 132 448', 1.1, .45) + K.line('M194 352 C188 390 186 420 188 448', 1.1, .45) + K.line('M160 394 L160 368', 1.1, .5) + K.line('M206 326 C200 340 198 356 198 372', 1.4, .8)
+        : K.line('M114 352 C120 390 124 420 122 448', 1.1, .45) + K.line('M186 352 C180 390 176 420 178 448', 1.1, .45) + K.line('M150 394 L150 368', 1.1, .5) + K.line('M110 322 C106 336 100 350 91 364', 1.4, .8) + K.line('M190 322 C194 336 200 350 209 364', 1.4, .8)),
+      1.8, [turned ? 'M114 330 C108 370 98 410 92 446 L106 448 C110 410 116 370 122 330Z' : 'M100 330 C96 370 90 410 86 446 L100 448 C102 410 106 370 110 330Z']);
+    const cuffs = turned
+      ? [['M86 446 C104 452 130 454 152 452 L152 478 C130 480 104 478 84 472Z', 'M85 462 C104 468 130 469 152 467 L152 482 L84 482Z', 'M86 459 C106 465 130 466 152 465'],
+         ['M164 452 C184 454 204 452 224 446 L226 472 C204 478 184 480 164 478Z', 'M164 467 C184 469 204 468 225 462 L226 482 L164 482Z', 'M164 465 C184 466 204 465 224 459']]
+      : [['M78 446 C98 452 124 454 146 452 L146 478 C124 480 98 478 76 472Z', 'M77 462 C98 468 124 469 146 467 L146 482 L76 482Z', 'M78 459 C100 465 124 466 146 465'],
+         ['M154 452 C176 454 202 452 222 446 L224 472 C202 478 176 480 154 478Z', 'M154 467 C176 469 202 468 223 462 L224 482 L154 482Z', 'M154 465 C176 466 200 465 222 459']];
+    s += cuffs.map(([d, sh, ln]) => K.piece(d, c, [sh], K.line(ln, 1.1, .55))).join('');
+    if (o.bib) s += turned
+      ? K.piece('M118 250 L170 250 C172 270 172 290 172 310 L116 310 C116 290 116 270 118 250Z', o.bib, ['M158 250 L170 250 C172 270 172 290 172 310 L160 310Z'], K.line('M128 260 L154 260 L153 282 L129 282Z', 1.2, .7))
+      : K.piece('M118 246 L182 246 C184 266 184 286 184 306 L116 306 C116 286 116 266 118 246Z', o.bib, ['M168 246 L182 246 C184 266 184 286 184 306 L170 306Z'], K.line('M134 258 L166 258 L165 282 L135 282Z', 1.2, .7));
+    const [x0, x1, tx] = turned ? [108, 214, 136] : [94, 206, 142];
+    s += K.piece(`M${x0} ${turned ? 304 : 300} L${x1} ${turned ? 304 : 300} L${x1} ${turned ? 324 : 320} L${x0} ${turned ? 324 : 320}Z`, c, [`M${x0} ${turned ? 318 : 314} L${x1} ${turned ? 318 : 314} L${x1} 326 L${x0} 326Z`])
+      + K.piece(`M${tx} ${turned ? 305 : 301} L${tx + 16} ${turned ? 305 : 301} L${tx + 16} ${turned ? 323 : 319} L${tx} ${turned ? 323 : 319}Z`, shade(c, .92));
+    if (o.vest) s += turned
+      ? K.piece('M114 214 C116 204 124 198 130 196 L140 240 L156 196 C176 198 198 204 204 214 C208 238 210 274 209 314 L113 314 C111 274 111 238 114 214Z', o.vest, ['M188 200 C202 208 208 238 209 314 L190 314 C194 264 194 224 188 200Z'],
+          K.line('M130 197 L140 238 L156 197', 4.5, .22) + Array.from({ length: 16 }, (_, i) => `M${116 + i * 6} 306 L${116 + i * 6} 314`).map(d => K.line(d, .9, .3)).join(''))
+      : K.piece('M102 212 C104 202 118 196 132 194 L150 240 L168 194 C182 196 196 202 198 212 C202 236 204 272 203 312 L97 312 C96 272 98 236 102 212Z', o.vest, ['M184 198 C198 206 204 236 204 312 L186 312 C190 262 190 222 184 198Z'],
+          K.line('M132 196 L150 238 L168 196', 4.5, .22) + Array.from({ length: 17 }, (_, i) => `M${100 + i * 6} 304 L${100 + i * 6} 312`).map(d => K.line(d, .9, .3)).join(''));
+    if (o.straps) {
+      const w = o.bib ? 13 : 8;
+      const ds = turned ? (o.bib ? ['M126 200 L124 254', 'M168 198 L166 254'] : ['M124 200 L122 310', 'M168 198 L168 310']) : (o.bib ? ['M122 198 L124 250', 'M178 198 L176 250'] : ['M126 196 L124 308', 'M174 196 L176 308']);
+      for (const d of ds) s += `<path d="${d}" stroke="${P_INK}" stroke-opacity=".85" stroke-width="${w + 2.6}" stroke-linecap="round"/><path d="${d}" stroke="${o.straps}" stroke-width="${w}" stroke-linecap="round"/>` + K.blur(`<path d="${d}" stroke="rgba(255,250,236,.4)" stroke-width="${w * .3}" transform="translate(-${w * .2} 0)"/>`);
+      const bt = turned ? (o.bib ? [[124, 256], [166, 256]] : [[122, 314], [168, 314]]) : (o.bib ? [[124, 252], [176, 252]] : [[124, 312], [176, 312]]);
+      s += bt.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="6" fill="${o.bib ? '#d9b05a' : '#4a3a2a'}" stroke="${P_INK}" stroke-width="1.2"/><circle cx="${x - 1.5}" cy="${y - 1.5}" r="1.6" fill="#fff" opacity=".4"/>`).join('');
+    }
+    return s;
+  }
+  // shins, slouchy socks, chunky leather shoes; the front shoes turn their toes out, the turned ones point at the machine
+  function pLegs(K, o, turned){
+    let s = '';
+    const legs = turned
+      ? [['M112 470 L130 470 L129 532 L114 532Z', 'M124 470 L130 470 L129 532 L125 532Z', 'M111 520 C110 512 132 510 132 520 L134 552 L110 552Z', 'M126 512 C132 514 134 530 134 552 L126 552Z', 112],
+         ['M184 472 L202 472 L201 538 L186 538Z', 'M196 472 L202 472 L201 538 L197 538Z', 'M183 526 C182 518 204 516 204 526 L205 558 L182 558Z', 'M198 518 C204 520 206 536 205 558 L198 558Z', 184]]
+      : [['M106 470 L124 470 L123 532 L108 532Z', 'M118 470 L124 470 L123 532 L119 532Z', 'M105 520 C104 512 126 510 126 520 L127 556 L104 556Z', 'M120 512 C126 514 127 530 127 556 L120 556Z', 105],
+         ['M176 470 L194 470 L192 532 L177 532Z', 'M188 470 L194 470 L192 532 L188 532Z', 'M174 520 C174 512 196 510 196 520 L196 556 L173 556Z', 'M190 512 C196 514 197 530 196 556 L190 556Z', 174]];
+    for (const [leg, legSh, sock, sockSh, x] of legs) {
+      const y0 = +sock.split(' ')[1];   // top of the sock
+      s += K.piece(leg, o.skin, [legSh], '', 1.6)
+        + K.piece(sock, o.socks, [sockSh], K.line(`M${x + 1} ${y0 + 7} C${x + 7} ${y0 + 10} ${x + 15} ${y0 + 10} ${x + 21} ${y0 + 7}`, 1, .45) + K.line(`M${x} ${y0 + 18} C${x + 7} ${y0 + 21} ${x + 15} ${y0 + 21} ${x + 22} ${y0 + 18}`, 1, .45), 1.6);
+    }
+    const rim = (d) => K.stroke(d, '#3a2418', 2.8, .7);
+    if (turned) {
+      const shoe = (dx, dy) => `<g transform="translate(${dx} ${dy})">` + K.piece('M138 552 C136 545 120 543 106 547 C92 551 78 560 76 570 C74 579 84 584 100 584 L134 584 C142 584 144 578 144 570 C144 562 142 557 138 552Z', o.shoes,
+          ['M74 576 C90 586 130 588 146 576 L146 592 L74 592Z', 'M128 546 C140 552 146 566 144 584 L134 584Z'], K.line('M112 552 C108 558 102 562 96 564', 1.1, .5), 1.8, ['M86 562 C92 556 100 552 108 552 C102 558 96 562 90 568Z'])
+        + rim('M114 549 C120 545 134 545 139 551') + K.stroke('M76 576 C90 584 126 586 144 578', shade(o.shoes, .55), 3, .8) + '</g>';
+      s += shoe(0, 0) + shoe(72, 8);
+    } else {
+      s += K.piece('M130 554 C128 545 112 543 100 547 C86 551 72 560 70 572 C68 583 82 590 102 590 C118 590 132 586 134 576 C135 567 133 560 130 554Z', o.shoes,
+          ['M66 578 C80 590 120 592 136 580 L136 598 L66 598Z', 'M124 548 C134 554 136 568 134 580 L128 586Z'], K.line('M108 553 C104 559 100 563 94 565', 1.1, .5), 1.8, ['M80 562 C86 556 94 552 102 552 C96 558 90 562 84 568Z'])
+        + rim('M104 551 C110 547 124 547 129 553') + K.stroke('M71 577 C80 588 120 591 134 578', shade(o.shoes, .55), 3.5, .8)
+        + K.piece('M170 554 C172 545 188 543 200 547 C214 551 228 560 230 572 C232 583 218 590 198 590 C182 590 168 586 166 576 C165 567 167 560 170 554Z', o.shoes,
+          ['M164 578 C180 592 220 590 234 578 L234 598 L164 598Z', 'M176 548 C166 554 164 568 166 580 L172 586Z'], K.line('M192 553 C196 559 200 563 206 565', 1.1, .5), 1.8, ['M220 562 C214 556 206 552 198 552 C204 558 210 562 216 568Z'])
+        + rim('M196 551 C190 547 176 547 171 553') + K.stroke('M229 577 C220 588 180 591 166 578', shade(o.shoes, .55), 3.5, .8);
+    }
+    return s;
+  }
+
+  /* ---- the two poses ---- */
+  // drawn compact, then laid out: everything from the collar to the shorts' cuffs is stretched 25% taller,
+  // the legs move down by the same amount and the head is drawn at 86% about the neck
+  const P_BODY = 'translate(0 192) scale(1 1.25) translate(0 -192)', P_LEGS = 'translate(0 71.5)';
+  const pHeadAt = tilt => `translate(150 196) rotate(${tilt}) scale(.86) translate(-150 -196)`;
+  const pSy = y => 192 + (y - 192) * 1.25;   // a body point's height after the stretch
+  const P_FACE = {
+    front: 'M92 112 C90 70 116 40 152 40 C188 40 212 68 210 110 C209 134 200 152 186 164 C174 174 162 178 150 178 C136 178 122 172 112 162 C99 150 93 134 92 112Z',
+    turned: 'M100 112 C98 70 126 40 162 40 C198 40 222 66 220 108 C219 132 211 150 198 162 C184 174 166 180 146 180 C130 180 116 172 108 160 C102 152 99 142 98 132 C98 124 99 118 100 112Z'
+  };
+  function pHead(K, o, exps, turned){
+    const H = turned ? P_HAIR.turned : P_HAIR.front;
+    let h = K.piece(H.back, shade(o.hair, .8), [H.shade[0]]);
+    const ears = turned ? ['M194 106 C210 96 222 114 216 130 C212 142 202 146 194 140Z'] : ['M96 108 C82 100 74 118 80 132 C84 142 94 146 100 140Z', 'M206 108 C220 100 228 118 222 132 C218 142 208 146 202 140Z'];
+    const earIn = turned ? ['M204 114 C210 116 212 126 208 134'] : ['M92 116 C86 116 84 126 88 134', 'M210 116 C216 116 218 126 214 134'];
+    h += ears.map((d, i) => K.piece(d, o.skin, [turned ? 'M206 100 L226 100 L226 150 L206 150Z' : (i ? 'M214 100 L230 100 L230 150 L214 150Z' : 'M70 100 L86 100 L86 150 L70 150Z')], K.line(earIn[i], 1.2, .5), 1.6)).join('');
+    const F = turned ? P_FACE.turned : P_FACE.front;
+    h += K.piece(F, o.skin, [turned ? 'M200 76 C222 110 214 154 188 174 L240 184 L240 76Z' : 'M196 70 C222 108 212 154 182 176 L236 186 L236 70Z'],
+      `<path d="${H.top}" transform="translate(3 7)" fill="${P_SH}" filter="url(#${K.soft})"/>`, 1.8,
+      [turned ? 'M102 122 C102 106 110 96 118 92 C114 104 112 118 112 134Z' : 'M100 120 C100 108 108 100 116 98 C112 108 110 120 112 134Z']);
+    h += pCheeks(K, o, turned);
+    h += exps.length === 1 ? pFace(K, o, exps[0], turned) : exps.map(e => `<g class="exp exp-${e}">${pFace(K, o, e, turned)}</g>`).join('');
+    h += pHairTop(K, o, H);
+    return h;
+  }
+  // in the game: turned toward the machine. Everything but the arms; the page draws the far arm behind this and the near arm in front.
+  const P_FAR = { x: 124, y: pSy(218) }, P_NEAR = { x: 200, y: pSy(218) };   // shoulders
+  function pInGame(o){
+    const K = pKit(), paint = K.paint();
+    let s = `<g transform="${P_LEGS}">${pLegs(K, o, true)}</g>`;
+    s += K.piece('M144 166 L143 202 L173 202 L172 166Z', o.skin, ['M136 160 C148 186 168 186 180 160 V192 H136Z']);
+    s += `<g transform="${P_BODY}">${pShirt(K, o, true) + pShorts(K, o, true) + pCollar(K, o, true)}</g>`;
+    const head = `<g transform="${pHeadAt(-2)}"><g class="headg" id="fcHead">${pHead(K, o, ['normal', 'happy', 'sad'], true)}</g></g>`;
+    return { defs: K.defs.join(''), paint, body: s, head };
+  }
+
+  // the claw player: a storybook kid at the machine's right corner, turned toward the controls, far hand on the
+  // grab button and near hand on the joystick. His outfit is picked each game. Coordinates are machine (rig) units.
+  const GRIP = { x: 450, y: 300, len: 30 };
+  const BTN = { x: 421, y: 293 };
+  const PL = { x: 390, y: 53.9, s: .594 };   // where the kid's drawing box sits in the rig, and its scale
+  const plBox = (x, y) => ({ x: (x - PL.x) / PL.s, y: (y - PL.y) / PL.s });
+  const plRig = (x, y) => ({ x: PL.x + x * PL.s, y: PL.y + y * PL.s });
+  function makePlayer(){
+    const look = P_LOOKS[Math.floor(Math.random() * P_LOOKS.length)], art = pInGame(look);
+    const sh = { L: plRig(P_FAR.x, P_FAR.y), R: plRig(P_NEAR.x, P_NEAR.y) };
+    const rest = { L: handAt(BTN.x, BTN.y), R: handAt(GRIP.x, GRIP.y - GRIP.len) };
+    const up = { L: { x: sh.L.x - 55, y: sh.L.y - 100 }, R: { x: sh.R.x + 55, y: sh.R.y - 100 } };   // both fists in the air
+    const svg = `<svg class="fc-player" id="fcPlayer" width="820" height="470" viewBox="0 0 820 470" aria-hidden="true"><defs>${art.defs}</defs>
+      <g transform="translate(${PL.x} ${PL.y}) scale(${PL.s})"><ellipse cx="160" cy="662" rx="100" ry="10" fill="#000" opacity=".4"/>
+      <g filter="url(#${art.paint})"><g id="fcArmL" class="arm-far"></g>${art.body}${art.head}<g id="fcArmR"></g></g></g></svg>`;
+    const H = plRig(158.6, 122);   // middle of his head, for the speech bubble
+    return { svg, look, sh, rest, up, head: project(H.x, H.y) };
+  }
+
+  // the claw machine itself; drawn once over the grading floor (scaled to fit) and once for the close-up
+  function machineHTML(mini){
+    const id = v => mini ? '' : ` id="${v}"`;
+    // a flat, front-on cabinet: back wall behind the glass, then rail, claw and balls, then the cabinet front
+    return `<div class="fc-rig"><div class="fc-glass">${DOODLE_BACK}</div><div class="fc-rail"></div>
+      <div class="fc-chute"></div><div class="fc-frame"></div>
+      <div class="fc-marquee"${id('fcMarquee')}><div>${MACHINE_LOGO}</div></div>
+      <div class="claw fc-claw open"${id('fcClaw')} style="transform:translateX(280px)"><div class="rope"${id('fcRope')} style="height:8px"></div><div class="head"><div class="hub"></div><div class="arm l"></div><div class="arm r"></div></div></div>
+      <div class="fc-chute-front"></div>
+      <div class="fc-shine"></div><div class="fc-ctrl">${SIDE_PANEL}</div>
+      <div class="fc-body">${DOODLE_BODY}</div>
+      <div class="fc-sticker">CLAW<br>IS LIFE</div>
+      <div class="fc-door"></div><div class="fc-flap"${id('fcFlap')}>PRIZE</div>
+      <div class="fc-led"${id('fcLed')}>READY</div>
+      <div class="fc-panel"></div>
+      <div class="fc-console"></div>
+      <div class="fc-btn"${id('fcBtn')}></div>
+      <div class="fc-stick"${id('fcStick')}></div></div>`;
+  }
+
+  /* ---- people: flat, outline-free busts with blank faces (staff and the claw player) ---- */
+  const WHITE = '#fbfaf7', COAT = '#f3f4f6', COAT_LINE = '#d8dce3';
+  const CREW_SKIN = ['#f7d3b0', '#f0c49c', '#e0a883', '#d38f6c', '#b07353', '#80533a'];
+  const CREW_HAIR = ['#7c7069', '#6b5a52', '#9c6868', '#b39f5e', '#cc7b4a', '#8a827f', '#4a403d', '#a8a29c', '#5b4b45'];
+  const CREW_OUTFIT = ['#b8dfe8', '#f5c4d6', '#a4a698', '#87b9ae', '#ec7148', '#ebe7bc', '#9786b3', '#fbc92f', '#7fb3d4', '#e993ad', '#7ea06f', '#f2a32a', '#9bc34a', '#bcd4ec', '#b068a8'];
+  const TIES = ['#1f86cf', '#c64b3c', '#46628a', '#6b4f8f', '#2f8f6d'];
+  const FRAMES = ['#8a5040', '#e2673f', '#b8453a', '#4a4550'];
+  const shade = (hex, f = .78) => '#' + [1, 3, 5].map(k => Math.min(255, Math.round(parseInt(hex.slice(k, k + 2), 16) * f)).toString(16).padStart(2, '0')).join('');
+
+  // staff (viewBox 70x150, face centered at 35,47): [hair behind the head, hair over the forehead, covers the ears]
+  const STAFF_HAIR = [
+    ['', 'M9 50 C6 26 20 16 36 17 C52 18 64 28 61 50 C58 42 55 37 50 34 C44 38 36 40 26 39 C20 40 14 44 9 50Z', 0],
+    ['M3 44 C3 22 19 12 35 12 C51 12 67 22 67 44 L67 71 L55 71 L55 50 L15 50 L15 71 L3 71Z', 'M9 46 C8 26 21 16 35 16 C49 16 62 26 61 46 L61 39 L9 39Z', 1],
+    ['M4 44 C4 22 19 12 35 12 C51 12 66 22 66 44 L69 97 L52 97 L50 60 L20 60 L18 97 L1 97Z', 'M9 48 C8 25 21 15 35 15 C49 15 62 25 61 48 C59 37 52 30 39 28 L35 20 L31 28 C18 30 11 37 9 48Z', 1],
+    ['M54 26 C70 24 72 54 64 72 C63 60 61 48 54 40Z', 'M10 47 C9 26 22 17 35 17 C48 17 61 26 60 47 C56 36 46 30 35 30 C24 30 14 36 10 47Z', 0],
+    ['M26 13 a9 9 0 1 0 18 0 a9 9 0 1 0 -18 0Z', 'M10 47 C9 26 22 17 35 17 C48 17 61 26 60 47 C56 36 46 30 35 30 C24 30 14 36 10 47Z', 0],
+    ['', 'M9 48 L10 30 L16 34 L18 20 L25 28 L30 15 L36 26 L42 14 L46 26 L53 19 L54 32 L61 30 L61 48 C56 40 46 35 35 35 C24 35 14 40 9 48Z', 0],
+    ['', 'M11 44 C11 26 22 20 35 20 C48 20 59 26 59 44 C54 36 46 32 35 32 C24 32 16 36 11 44Z', 0],
+    ['', 'M8 48 C0 44 2 30 10 28 C8 16 20 8 28 12 C32 4 46 6 48 13 C58 9 68 20 62 30 C69 34 67 46 62 48 C58 38 46 33 35 33 C24 33 12 38 8 48Z', 0],
+    ['', 'M9 50 C6 26 20 16 36 17 C54 18 64 30 61 52 C58 44 52 40 46 40 C38 42 26 46 16 44 C13 46 11 48 9 50Z', 0],
+    ['M13 42 C1 46 0 70 8 80 C10 68 12 58 17 50Z M57 42 C69 46 70 70 62 80 C60 68 58 58 53 50Z', 'M10 47 C9 26 22 17 35 17 C48 17 61 26 60 47 C56 36 46 30 35 30 C24 30 14 36 10 47Z', 0],
+    ['', 'M10 48 C9 26 22 17 35 17 C48 17 61 26 60 48 C58 38 52 31 39 29 L35 23 L31 29 C18 31 12 38 10 48Z', 0],
+    ['', 'M10 50 C8 42 9 36 12 33 C14 36 15 42 15 50Z M60 50 C62 42 61 36 58 33 C56 36 55 42 55 50Z M22 24 C28 20 42 20 48 24 C44 26 26 26 22 24Z', 0]
+  ];
+  const STAFF_HATS = [
+    c => `<path d="M10 40 C10 20 22 13 35 13 C48 13 60 20 60 40Z" fill="${c}"/><path d="M5 41 Q35 50 65 41 Q35 35 5 41Z" fill="${shade(c)}"/>`,
+    c => `<path d="M11 38 C11 17 22 10 35 10 C48 10 59 17 59 38Z" fill="${c}"/><path d="M10 33 H60 V44 H10Z" fill="${shade(c, .86)}"/><circle cx="35" cy="9" r="5" fill="${shade(c, .7)}"/>`
+  ];
+  const FACE = 'M10 45 C10 27 21 22 35 22 C49 22 60 27 60 45 C60 61 49 72 35 72 C21 72 10 61 10 45Z';
+  const BODY = 'M5 160 L7 108 C8 95 16 89 28 86 L42 86 C54 89 62 95 63 108 L65 160Z';
+  const seams = c => `<path d="M15 112 L14 152 M55 112 L56 152" fill="none" stroke="${shade(c, .84)}" stroke-width="1.6" stroke-linecap="round"/>`;
+  const crew = sk => `<path d="M28 86 Q35 93 42 86Z" fill="${shade(sk, .93)}"/>`;
+  const tieArt = t => `<path d="M33 90 H37 L36.5 94 H33.5Z M33.5 94 H36.5 L38 116 L35 120 L32 116Z" fill="${t}"/>`;
+  const collar = c => `<path d="M27 84 L35 92 L29 97 L24 90Z M43 84 L35 92 L41 97 L46 90Z" fill="${c}"/>`;
+  // graders wear everyday clothes: shirt and tie, cardigan, jacket and tie, crew neck, V-neck, round collar, buttons, suit
+  const GRADER_OUTFITS = [
+    (c, sk, t) => `<path d="${BODY}" fill="${c}"/>${seams(c)}${collar(shade(c, .93))}${tieArt(t)}`,
+    (c, sk) => `<path d="${BODY}" fill="${c}"/>${seams(c)}<path d="M26 86 L44 86 L42 152 L28 152Z" fill="${WHITE}"/>${crew(sk)}`,
+    (c, sk, t) => `<path d="${BODY}" fill="${c}"/>${seams(c)}<path d="M27 86 L35 110 L43 86Z" fill="${WHITE}"/>${collar(WHITE)}${tieArt(t)}`,
+    (c, sk) => `<path d="${BODY}" fill="${c}"/>${seams(c)}${crew(sk)}`,
+    (c, sk) => `<path d="${BODY}" fill="${c}"/>${seams(c)}<path d="M28 86 L35 99 L42 86Z" fill="${shade(sk, .93)}"/>`,
+    (c, sk) => `<path d="${BODY}" fill="${c}"/>${seams(c)}${crew(sk)}<path d="M24 88 C26 95 33 96 35 91 C37 96 44 95 46 88 C40 85 30 85 24 88Z" fill="${WHITE}"/>`,
+    (c, sk) => `<path d="${BODY}" fill="${c}"/>${seams(c)}${crew(sk)}${[100, 111, 122, 133].map(y => `<circle cx="35" cy="${y}" r="1.7" fill="${WHITE}"/>`).join('')}`,
+    (c, sk, t) => `<path d="${BODY}" fill="${c}"/>${seams(c)}<path d="M28 86 L35 105 L42 86Z" fill="${WHITE}"/>${tieArt(shade(c, .55))}<path d="M28 86 L22 99 L35 108 M42 86 L48 99 L35 108" fill="none" stroke="${shade(c, .84)}" stroke-width="1.6"/>`
+  ];
+  // inspectors keep their white lab coats, with a shirt (and sometimes a tie) underneath
+  const labCoat = (c, sk, t, pen) => `<path d="${BODY}" fill="${COAT}"/>${seams(COAT)}
+      <path d="M26 86 L35 111 L44 86Z" fill="${c}"/>${t ? `${collar(shade(c, .93))}${tieArt(t)}` : crew(sk)}
+      <path d="M26 86 L19 100 L26 103 L35 113Z M44 86 L51 100 L44 103 L35 113Z" fill="#e4e7ec"/>
+      <path d="M35 113 V152" fill="none" stroke="${COAT_LINE}" stroke-width="1.6"/>
+      <rect x="44" y="118" width="10" height="9" rx="1.5" fill="#e4e7ec"/><rect x="46.5" y="113" width="2.2" height="8" rx="1" fill="${pen}"/>`;
+  // each lane's inspector and grader get their own mix, so no two staff look alike
+  function crewLook(kind, i){
+    const k = kind === 'inspect' ? 0 : 1, cyc = Math.floor(i / 12);
+    return {
+      skin: CREW_SKIN[(i * 5 + 1 + k * 3 + cyc * 2) % CREW_SKIN.length],
+      hair: CREW_HAIR[(i * 4 + 2 + k * 5 + cyc) % CREW_HAIR.length],
+      hs: (i * 5 + k * 7 + cyc) % STAFF_HAIR.length,
+      hat: (i * 7 + k * 3 + cyc) % 6 === 2 ? (i + k + cyc) % STAFF_HATS.length : -1,
+      hatC: CREW_OUTFIT[(i * 5 + k * 7 + 3) % CREW_OUTFIT.length],
+      outfit: (i * 3 + cyc) % GRADER_OUTFITS.length,
+      color: CREW_OUTFIT[(i * 7 + k * 4 + cyc * 5) % CREW_OUTFIT.length],
+      tie: (i * 3 + k + cyc) % 3 ? TIES[(i + k * 2 + cyc) % TIES.length] : null,
+      frame: FRAMES[(i * 3 + k) % FRAMES.length],
+      acc: (i * 3 + k * 2 + cyc) % 7,   // 0, 1 glasses · 2 beard · 3 earrings · else nothing
+    };
+  }
+  function worker(kind, left, i, mood){
+    const L = crewLook(kind, i), sk = L.skin, [back, front, coversEars] = STAFF_HAIR[L.hs];
+    const hatOn = L.hat >= 0;
+    // no faces: moods show in the head (sleepy and bored droop), headphones (happy) and a red flush (angry)
+    const tilt = { sleepy: -11, bored: 8 }[mood] || 0, head = `transform="rotate(${tilt} 35 72)"`;
+    const outfit = kind === 'inspect'
+      ? labCoat(L.tie ? shade(CREW_OUTFIT[(i * 2 + 1) % CREW_OUTFIT.length], 1.05) : L.color, sk, L.tie, TIES[(i + 1) % TIES.length])
+      : GRADER_OUTFITS[L.outfit](L.color, sk, L.tie || TIES[i % TIES.length]);
+    const hairTop = hatOn
+      ? `<path d="M10 46 C10 40 11 37 14 35 L15 47Z M60 46 C60 40 59 37 56 35 L55 47Z" fill="${L.hair}"/>${STAFF_HATS[L.hat](L.hatC)}`
+      : `<path d="${front}" fill="${L.hair}"/>`;
+    const beard = L.acc === 2 && [0, 5, 6, 8, 10, 11].includes(L.hs) ? `<path d="M12 55 C14 67 23 75 35 75 C47 75 56 67 58 55 C55 61 50 63 45 63 C41 62 29 62 25 63 C20 63 15 61 12 55Z" fill="${L.hair}"/><path d="M29.5 66.5 Q35 70 40.5 66.5 Q35 64.5 29.5 66.5Z" fill="${shade(sk, .9)}"/>` : '';
+    const glasses = L.acc <= 1 ? `<g fill="none" stroke="${L.frame}" stroke-width="2.6" stroke-linecap="round"><rect x="15.5" y="42" width="16" height="10.5" rx="${L.acc ? 2.5 : 5}"/><rect x="38.5" y="42" width="16" height="10.5" rx="${L.acc ? 2.5 : 5}"/><path d="M31.5 46 q3.5 -2.5 7 0 M15.5 45 H11 M54.5 45 H59"/></g>` : '';
+    const earrings = L.acc === 3 && !coversEars ? `<circle cx="10.5" cy="55" r="1.9" fill="#f2b632"/><circle cx="59.5" cy="55" r="1.9" fill="#f2b632"/>` : '';
+    const phones = mood === 'happy' ? `<path d="M9 48 C7 12 63 12 61 48" fill="none" stroke="#5a5560" stroke-width="4" stroke-linecap="round"/><rect x="3" y="39" width="11" height="18" rx="5" fill="#e67cf2"/><rect x="56" y="39" width="11" height="18" rx="5" fill="#e67cf2"/>` : '';
+    const flush = mood === 'angry' ? `<path d="${FACE}" fill="#ff4a3a" opacity=".32"/>` : '';
+    return `<svg class="worker${kind === 'inspect' ? '' : ' b'}" style="left:${left}px" width="34" height="73" viewBox="0 0 70 150" aria-hidden="true">
+      ${back && !(hatOn && L.hs === 4) ? `<g ${head}><path d="${back}" fill="${L.hair}"/></g>` : ''}
+      <path d="M28 62 V84 H42 V62Z" fill="${shade(sk, .93)}"/>
+      <g transform="translate(0 -7)">${outfit}</g>
+      <g ${head}>
+        ${coversEars ? '' : `<circle cx="10.5" cy="48" r="5" fill="${sk}"/><circle cx="59.5" cy="48" r="5" fill="${sk}"/>`}
+        <path d="${FACE}" fill="${sk}"/>
+        ${flush}${beard}${hairTop}${glasses}${earrings}${phones}
+      </g></svg>${moodFx(mood, left)}`;
+  }
+  // floating mood effect above a crew member's head (lane coordinates)
+  function moodFx(mood, left){
+    if (!mood) return '';
+    const inner = {
+      sleepy: '<b>z</b><b>z</b><b>z</b>',
+      happy: '<b>♪</b><b>♫</b><b>♪</b>',
+      bored: '<b>…</b>',
+      angry: '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M5 1 q0 4 -4 4 M9 1 q0 4 4 4 M1 9 q4 0 4 4 M13 9 q-4 0 -4 4" stroke="#ff4d45" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>'
+    }[mood];
+    return `<div class="mood ${mood}" style="left:${left + 22}px">${inner}</div>`;
+  }
+
+  // measured seconds at normal speed for the claw finale: one catch + reveal, one miss, and the hand-off from grading
+  // claw machine: every grab has this chance to hold on
+  const GRAB = .3;
+  // after this many misses in a row for one prize, the next grab holds (the ball is still picked at random, so odds stay fair)
+  const MAX_MISSES = 4;
+  // measured seconds at normal speed: slabs flying into the machine + zoom, one miss, one catch with its reveal
+  const CLAW_EST = { handoff: 7, miss: 4.2, catch: 11.5 };
+  // measured: after the timer, the last line finishes its card about 5-8s later
+  const FINISH_EST = 6;
+  const initial = n => ((n.match(/[A-Za-z0-9]/) || ['?'])[0]).toUpperCase();
+
+  const gradeMode = {
+    title: 'Gem Mint or Bust', label: 'Gem Mint or Bust',
+    sp: 1,
+    tw(ms, fn, ease){ return tween(ms * this.sp, fn, ease); },
+    w(ms){ return wait(ms * this.sp); },
+
+    lenLabel: 'Grading time',
+    clawTime(n){
+      const W = Math.min(winnersN, n);
+      let misses = 0; for (let k = 1; k <= MAX_MISSES; k++) misses += Math.pow(1 - GRAB, k);
+      return CLAW_EST.handoff + W * (CLAW_EST.catch + misses * CLAW_EST.miss);
+    },
+    estimate(n){ return gameLen + FINISH_EST + this.clawTime(n); },
+    note(n){
+      const W = Math.min(winnersN, n);
+      return `Grading runs <b>${gameLen}s</b>, then each line finishes the card it's on. The claw machine picks ${W} winner${W === 1 ? '' : 's'} after that, about <b>${Math.round(FINISH_EST + this.clawTime(n))}s</b> more in all.`;
+    },
+    plan(n){
+      const W = Math.min(winnersN, n);
+      return { T: gameLen, W, G: gameLen, sg: 1, p: .5 };
+    },
+
+    build(list){
+      const X = GL.X, n = list.length;
+      this.sp = 1; this.fc = null;
+      // as many columns of scaled-down lanes as it takes to show every line as large as the space allows
+      const cols = bestCols(n), compact = cols > 1, sc = 1 / cols, colW = GL.W / cols, rows = Math.ceil(n / cols);
+      const hs = compact ? Math.min(1, 2 / cols) : 1;   // the header shrinks with the lanes past two columns
+      const HEAD = compact ? 84 * hs : GL.HEAD, LH = GL.LH * sc;
+      this.H = HEAD + rows * LH;
+      this.lay = list.map((_, i) => ({ ox: Math.floor(i / rows) * colW, oy: HEAD + (i % rows) * LH, s: sc }));
+      const labels = [['tray', 'Stack'], ['inspect', 'Inspect'], ['grade', 'Grade'], ['slab', 'Slab'], ['qc', 'QC'], ['vault', 'Gem Mint']];
+      const head = `<div class="gl-head" style="height:${HEAD}px"></div>
+        <div class="gl-clock"${hs < 1 ? ` style="left:${12 * hs}px;top:${9 * hs}px;transform:scale(${hs});transform-origin:0 0"` : ''}><small id="glClockLabel">GRADING WINDOW</small><b id="glClock">${fmtClock(this.plan(Math.max(2, n)).G)}</b></div>
+        ${Array.from({ length: cols }, (_, c) => labels.map(([k, t]) => compact
+          ? `<div class="gl-hd sm" style="left:${c * colW + (X[k] - 60) * sc}px;top:${66 * hs}px;width:${120 * sc}px;font-size:${16 * sc}px">${t}</div>`
+          : `<div class="gl-hd" style="left:${X[k] - 45}px">${t}</div>`).join('')).join('')}`;
+      // everyone starts neutral; moods are rolled and revealed when the game starts (revealMoods)
+      this.moods = list.map(() => ({ inspect: null, grade: null }));
+      const lanes = list.map((name, i) => `
+        <div class="ln${i % 2 ? ' alt' : ''}" id="ln${i}" style="left:${this.lay[i].ox}px;top:${this.lay[i].oy}px${compact ? `;transform:scale(${sc});transform-origin:0 0` : ''}">
+          <div class="ln-name"><b>${esc(name)}</b><span class="ln-mod ln-spd"></span><span class="ln-mod ln-odds"></span></div>
+          <div class="ln-tray-back"></div><div class="ln-stack" style="--c:${laneColor(i)}"><i></i><i></i><i></i></div><div class="ln-tray"></div>
+          ${worker('inspect', X.inspect + 10, i)}
+          ${worker('grade', X.grade + 10, i)}
+          <div class="ln-board" style="left:${X.grade + 44}px"><small>GRADE</small><b>—</b></div>
+          <div class="ln-pillar" style="left:${X.slab - 30}px"></div><div class="ln-pillar" style="left:${X.slab + 26}px"></div>
+          <div class="ln-ram" style="left:${X.slab - 20}px"><i></i><b></b></div>
+          <div class="ln-house" style="left:${X.slab - 32}px"></div>
+          <div class="ln-flash" style="left:${X.slab - 35}px"></div>
+          <div class="ln-post" style="left:${X.qc - 24}px"></div><div class="ln-post" style="left:${X.qc + 20}px"></div>
+          <div class="ln-bar" style="left:${X.qc - 26}px">QC</div><div class="ln-light" style="left:${X.qc - 5.5}px"></div>
+          <div class="ln-vault"></div><div class="ln-door"><b class="ln-tally">0</b></div>
+          <div class="ln-belt"></div><div class="ln-skirt"></div>
+          <div class="lc" style="--c:${laneColor(i)}"><div class="lc-label"></div><div class="lc-card">${creature(laneColor(i), i, 20)}</div>${CRACK}</div>
+          <div class="tool loupe">${loupeSVG(crewLook('inspect', i).skin)}</div>
+          <div class="tool stamp">${stampSVG(crewLook('grade', i).skin)}</div>
+          <div class="ln-pop"></div>
+        </div>`).join('');
+      // the same machine as the close-up, waiting (hidden) at centre stage over the grading floor
+      const ms = Math.max(.3, Math.min(1.5, (this.H - 24) / 420)), MX0 = GL.W / 2 - project(300, 0).x * ms, MY0 = this.H / 2 - 217 * ms;
+      this.tr = { ms, MX0, MY0, DX: GL.W / 2, DY: MY0 + 12 * ms };
+      const overhead = `<div class="gl-dim" id="glDim" style="height:${this.H}px"></div>
+        <div class="fc mini" id="glMini" style="left:${MX0}px;top:${MY0}px;transform:scale(${ms})">${machineHTML(true)}</div>`;
+      this.cam = { x: 0 }; this.zooming = false;
+      const dividers = Array.from({ length: cols - 1 }, (_, c) => `<div class="gl-div" style="left:${(c + 1) * colW}px;top:${HEAD}px;height:${this.H - HEAD}px"></div>`).join('');
+      stage.innerHTML = `<div class="gl-box" id="glBox" style="padding:${GL_PAD}px"><div class="gl-fit" id="glFit"><div class="gl${compact ? ' compact' : ''}" id="gl" style="height:${this.H}px">${head}${lanes}${dividers}${overhead}</div></div></div>`;
+      this.gl = $('#gl'); this.fit();
+      this.lanes = list.map((n, i) => {
+        const root = $('#ln' + i), q = s => root.querySelector(s);
+        const L = {
+          n, i, root, el: q('.lc'), belt: q('.ln-belt'), ram: q('.ln-ram'), flash: q('.ln-flash'),
+          light: q('.ln-light'), door: q('.ln-door'), tally: q('.ln-tally'), board: q('.ln-board b'), pop: q('.ln-pop'),
+          workers: [...root.querySelectorAll('.worker')],
+          x: X.tray, y: GL.TRAY, rot: rand(-6, 6), attempt: 1, grade: null, beltOff: 0, count: 0,
+          mod: 0, insp: 1,
+          loupe: { el: q('.loupe'), ax: 9.4, ay: 9.4, rx: X.inspect + 46, ry: 62 },
+          stamp: { el: q('.stamp'), ax: 8, ay: 24, rx: X.grade + 46, ry: 76 }
+        };
+        this.place(L);
+        for (const t of [L.loupe, L.stamp]) { t.x = t.rx; t.y = t.ry; this.setTool(t); }
+        return L;
+      });
+    },
+    revealMoods(){
+      const X = GL.X;
+      this.lanes.forEach((L, i) => {
+        const m = { inspect: rollMood(), grade: rollMood() };
+        this.moods[i] = m;
+        const ins = MOODS[m.inspect]?.insp ?? 1;
+        L.mod = MOODS[m.grade]?.mod || 0; L.insp = ins;   // set right away; the show follows
+        if (!m.inspect && !m.grade) return;
+        wait(250 + Math.random() * 1400).then(() => {
+          if (!L.root.isConnected) return;
+          ['inspect', 'grade'].forEach((kind, k) => {
+            const mood = m[kind]; if (!mood) return;
+            const tmp = document.createElement('div');
+            tmp.innerHTML = worker(kind, X[kind] + 10, i, mood);
+            const svg = tmp.querySelector('svg.worker'), fx = tmp.querySelector('.mood');
+            L.workers[k].replaceWith(svg); L.workers[k] = svg;
+            svg.classList.add('moodpop'); setTimeout(() => svg.classList.remove('moodpop'), 700);
+            if (fx) L.root.appendChild(fx);
+          });
+          // grader: chance of a 10 · inspector: inspection time (less time is good, so it's green)
+          const v = Math.round(L.mod * 100), t = Math.round((ins - 1) * 100);
+          const odds = L.root.querySelector('.ln-odds'), spd = L.root.querySelector('.ln-spd');
+          if (v) {
+            const amt = `${v > 0 ? '+' : '−'}${Math.abs(v)}%`;
+            odds.textContent = `GM ${amt}`;   // GM = Gem Mint: the grader's effect on the chance of a 10
+            odds.title = `Grader: ${MOODS[m.grade].label} (${amt} chance of a Gem Mint 10)`;
+            odds.className = `ln-mod ln-odds ${v > 0 ? 'up' : 'down'} lv${Math.min(4, Math.round(Math.abs(v) / 10))} show`;
+          }
+          if (t) {
+            spd.innerHTML = `${CLOCK_ICON}${t > 0 ? '+' : '−'}${Math.abs(t)}%`;
+            spd.title = `Inspector: ${MOODS[m.inspect].label} (${t <= -100 ? 'inspects on the fly as the card rolls past' : `inspection takes ${Math.abs(t)}% ${t > 0 ? 'longer' : 'less time'}`})`;
+            spd.className = `ln-mod ln-spd ${t < 0 ? 'up' : 'down'} show`;
+          }
+          audio.sfx((v ? v > 0 : t < 0) ? 'moodUp' : 'moodDown');
+        });
+      });
+    },
+    fit(){
+      const g = $('#glFit'); if (g && this.gl && g.contains(this.gl) && !this.zooming) fitScene(g, this.gl, GL.W, this.H, this.cam.x, GL_PAD);
+      const f = $('#fcFit'); if (f && this.fc && f.contains(this.fc)) fitScene(f, this.fc, FC.W, FC.H);
+    },
+
+    /* ---- grading lines ---- */
+    place(L){ L.el.style.transform = `translate(${L.x - 15}px,${L.y - 40}px) rotate(${L.rot}deg) scale(${L.sc || 1})`; },
+    setTool(t){ t.el.style.transform = `translate(${t.x - t.ax}px,${t.y - t.ay}px)`; },
+    moveTool(t, x, y, ms, ease){
+      const x0 = t.x, y0 = t.y;
+      return this.tw(ms, k => { t.x = x0 + (x - x0) * k; t.y = y0 + (y - y0) * k; this.setTool(t); }, ease);
+    },
+    popText(L, text, gold){
+      const p = L.pop;
+      p.textContent = text; p.className = 'ln-pop' + (gold ? ' gold' : '');
+      p.style.transform = `translate(${GL.X.qc}px,-2px) translateX(-50%)`;
+      void p.offsetWidth; p.classList.add('go');
+    },
+    async move(L, x1){
+      const x0 = L.x, d = x1 - x0, b0 = L.beltOff;
+      await this.tw(Math.abs(d) / rand(140, 250) * 1000, k => {
+        L.x = x0 + d * k; this.place(L);
+        L.belt.style.backgroundPositionX = (b0 + d * k) + 'px';
+      });
+      L.beltOff = b0 + d;
+    },
+    async feed(L){
+      const x0 = L.x, y0 = L.y, r0 = L.rot, x1 = GL.X.inspect, b0 = L.beltOff;
+      await this.tw(rand(550, 750), k => {
+        L.x = x0 + (x1 - x0) * k;
+        L.y = (1 - k) * (1 - k) * y0 + 2 * (1 - k) * k * 20 + k * k * GL.BELT;
+        L.rot = r0 * (1 - k); this.place(L);
+        L.belt.style.backgroundPositionX = (b0 + (x1 - x0) * k) + 'px';
+      });
+      L.beltOff = b0 + (x1 - x0);
+    },
+    async inspect(L){
+      // same loupe pass for every inspector (1.1s); the mood only changes how fast it plays
+      const t = L.loupe, cx = GL.X.inspect, f = L.insp ?? 1;
+      if (!f) { this.glance(L); return; }   // happy: don't hold the card, look while it moves on
+      audio.sfx('blip');
+      await this.moveTool(t, cx + 2, 52, 200 * f);
+      await this.tw(700 * f, k => { t.x = cx + 2 + Math.sin(k * Math.PI * 3) * 8; t.y = 52 - Math.sin(k * Math.PI * 2) * 8; this.setTool(t); }, linear);
+      await this.moveTool(t, t.rx, t.ry, 200 * f);
+    },
+    // happy inspector: a 0.3s loupe pass that follows the card as it rolls on toward the grader
+    async glance(L){
+      const t = L.loupe;
+      audio.sfx('blip');
+      await this.tw(300, k => {
+        const reach = Math.sin(k * Math.PI);   // out to the card and back
+        t.x = t.rx + (L.x + 2 - t.rx) * reach + Math.sin(k * Math.PI * 3) * 4 * reach;
+        t.y = t.ry + (52 - t.ry) * reach;
+        this.setTool(t);
+      }, linear);
+      t.x = t.rx; t.y = t.ry; this.setTool(t);
+    },
+    // players who have (or are about to have) at least one capsule
+    owners(){ return this.lanes.filter(L => L.count > 0 || L.grade === 10).length; },
+    async stamp(L){
+      const t = L.stamp, cx = GL.X.grade;
+      L.board.textContent = '…'; L.board.className = '';
+      await this.moveTool(t, cx, 20, 180);
+      await this.w(rand(0, 300));
+      await this.moveTool(t, cx, 36, 90, easeIn);
+      audio.sfx('stamp');
+      L.grade = rollGrade(L.mod, this.overtime);
+      L.board.textContent = L.grade;
+      L.board.className = L.grade === 10 ? 'ten' : 'miss';
+      audio.sfx(L.grade === 10 ? 'ten' : 'miss');
+      if (L.grade === 10) {
+        L.workers.forEach(w => { w.classList.remove('cheer'); w.getBoundingClientRect(); w.classList.add('cheer'); });
+        say(`${B(L.n)} grades a <b>GEM MINT 10</b>! +1 capsule.`, this.total === 0);
+        if (this.overtime && this.owners() >= this.need) this.close();
+      } else if (L.grade === 9) {
+        say(`${B(L.n)} gets a 9. So close.`);
+      }
+      await this.w(100);
+      await this.moveTool(t, t.rx, t.ry, 220);
+    },
+    async press(L){
+      await this.tw(130, k => L.ram.style.transform = `translateY(${13 * k}px)`, easeIn);
+      L.el.classList.add('slabbed', 'flash');
+      audio.sfx('press');
+      if (L.grade === 10) L.el.classList.add('ten');
+      this.tw(380, k => L.flash.style.opacity = k < .2 ? k * 5 : (1 - k) * 1.25, linear);
+      await this.w(140);
+      L.el.classList.remove('flash');
+      await this.tw(260, k => L.ram.style.transform = `translateY(${13 * (1 - k)}px)`);
+    },
+    shards(L){
+      const bits = Array.from({ length: 7 }, () => {
+        const el = document.createElement('div'); el.className = 'shard'; L.root.appendChild(el);
+        return { el, vx: rand(-50, 50), vy: rand(-70, -25), r: rand(0, 360) };
+      });
+      const x = L.x, y = L.y - 22;
+      this.tw(550, k => bits.forEach(b => {
+        b.el.style.transform = `translate(${x + b.vx * k}px,${y + b.vy * k + 160 * k * k}px) rotate(${b.r + 400 * k}deg)`;
+        b.el.style.opacity = 1 - k;
+      }), linear).then(() => bits.forEach(b => b.el.remove()));
+    },
+    // the next card comes off the stack (a different character each time) and pops up in the tray
+    nextCard(L){
+      L.el.classList.remove('slabbed', 'cracked', 'ten');
+      L.el.style.zIndex = ''; L.sc = 1;
+      L.light.className = 'ln-light';
+      L.grade = null; L.attempt++;
+      L.board.textContent = '—'; L.board.className = '';
+      L.el.querySelector('.lc-card').innerHTML = creature(laneColor(L.i), L.i + L.attempt - 1, 20);
+      L.x = GL.X.tray; L.rot = rand(-6, 6);
+      return this.tw(220, k => { L.y = GL.TRAY - 10 + 10 * k; L.el.style.opacity = k; this.place(L); });
+    },
+    async crack(L){
+      L.light.className = 'ln-light bad'; this.flashRow(L, false);
+      await this.w(120);
+      L.el.classList.add('cracked');
+      this.popText(L, `${L.grade} · CRACKED`);
+      audio.sfx('crack');
+      const x0 = L.x;
+      await this.tw(320, k => { L.x = x0 + Math.sin(k * Math.PI * 8) * 2.5 * (1 - k); this.place(L); }, linear);
+      this.shards(L);
+      // the cracked slab is tossed away and the next card on the stack is up
+      audio.sfx('toss');
+      L.el.style.zIndex = 30;
+      const y0 = L.y, tx = x0 + rand(30, 80), spin = Math.random() < .5 ? -540 : 540;
+      await this.tw(rand(520, 680), k => {
+        L.x = x0 + (tx - x0) * k;
+        L.y = y0 - 150 * k + 60 * k * k;
+        L.rot = spin * k; L.sc = 1 - .45 * k; L.el.style.opacity = 1 - k; this.place(L);
+      }, linear);
+      await this.nextCard(L);
+      await this.w(rand(150, 350));
+    },
+    async deliver(L){
+      L.light.className = 'ln-light ok'; this.flashRow(L, true);
+      this.popText(L, 'GEM MINT 10', true);
+      L.door.classList.add('open');
+      await this.w(200);
+      await this.move(L, GL.X.vault);
+      await this.tw(250, k => L.el.style.opacity = 1 - k, linear);
+      L.door.classList.remove('open');
+      L.count++; this.total++;
+      audio.sfx('pop');
+      L.tally.textContent = L.count;
+      L.tally.classList.remove('bump'); void L.tally.offsetWidth; L.tally.classList.add('bump');
+      L.root.classList.add('win');
+      // a fresh card waits in the tray for the next submission
+      await this.nextCard(L);
+      await this.w(rand(150, 300));
+    },
+    flashRow(L, ok){ const c = L.root.classList; c.remove('qc-ok', 'qc-bad'); void L.root.offsetWidth; c.add(ok ? 'qc-ok' : 'qc-bad'); },
+    out(L){ if (!L.count) L.root.classList.add('dim'); },
+    close(){
+      if (this.closed) return;
+      this.closed = true;
+      $('#glClockLabel').textContent = 'FINISHING LAST CARDS';
+      say('Grading is closed!', true);
+    },
+    async lane(L){
+      const X = GL.X;
+      await this.w(rand(0, 250));
+      const steps = [
+        () => this.feed(L), () => this.inspect(L),
+        () => this.move(L, X.grade), () => this.stamp(L),
+        () => this.move(L, X.slab), () => this.press(L),
+        () => this.move(L, X.qc)
+      ];
+      while (true) {
+        if (this.closed) return this.out(L);   // time's up: the card in progress was finished, don't start another
+        for (const step of steps) await step();
+        if (L.grade === 10) await this.deliver(L);
+        else await this.crack(L);
+      }
+    },
+    async grading(P){
+      this.sp = P.sg; this.p = P.p; this.need = P.W;
+      this.closed = false; this.overtime = false; this.total = 0;
+      const t0 = performance.now(), lbl = $('#glClockLabel'), clk = $('#glClock');
+      lbl.textContent = 'GRADING CLOSES IN';
+      say(`Grading is open for ${Math.round(P.G)}s. Every Gem Mint 10 drops a capsule into the claw machine. More capsules, better odds.`, true);
+      const g = gen, timer = setInterval(() => {
+        if (g !== gen) return clearInterval(timer);
+        const rem = P.G - (performance.now() - t0) / 1000;
+        if (!this.closed && !this.overtime) clk.textContent = fmtClock(Math.max(0, rem));
+        if (rem <= 0 && !this.closed && !this.overtime) {
+          if (this.owners() >= this.need) this.close();
+          else {
+            this.overtime = true; this.p = Math.max(this.p, .65);
+            lbl.textContent = 'OVERTIME'; clk.textContent = '0:00.0';
+            say(`Time! Only ${this.owners()} player${this.owners() === 1 ? ' has' : 's have'} a capsule. Overtime until ${this.need} do.`, true);
+          }
+        }
+      }, 100);
+      await Promise.all(this.lanes.map(L => this.lane(L)));
+      clearInterval(timer);
+      lbl.textContent = 'GRADING CLOSED';
+    },
+
+    /* ---- after grading: the claw machine appears over the floor and the Gem Mint slabs fly into it ---- */
+    mkBall(L, parent){
+      const el = document.createElement('div');
+      el.className = L ? 'cap' : 'cap filler';
+      el.innerHTML = `<i class="ct"></i><i class="cb"></i>${L ? `<b>${esc(initial(L.n))}</b>` : ''}`;
+      parent.appendChild(el);
+      return { L, el, x: 0, y: 0, rot: 0, sc: 1, home: null };
+    },
+    // where a ball dropped at x comes to rest on the floor or on top of other balls
+    restY(x, placed){
+      const b = this.bs || 1, d = 25 * b;
+      let y = 283 - 13 * b;
+      for (const p of placed) { const dx = Math.abs(p.x - x); if (dx < d) y = Math.min(y, p.y - Math.sqrt(d * d - dx * dx)); }
+      return y;
+    },
+    pileHomes(n){
+      const placed = [];
+      for (let k = 0; k < n; k++) {
+        let best = null;
+        // try a few random spots and settle into the lowest one: an uneven pile without towers
+        for (let t = 0; t < 6; t++) { const x = rand(232, 364), y = this.restY(x, placed); if (!best || y > best.y) best = { x, y }; }
+        placed.push({ x: best.x, y: best.y, r: rand(-45, 45) });
+      }
+      return placed;
+    },
+    async transfer(){
+      const owners = this.owners_, T = this.tr, mini = this.gl.querySelector('#glMini .fc-rig'), hop = mini.querySelector('.fc-marquee');
+      const left = owners.map(L => L.count), order = [];
+      while (order.length < this.total) owners.forEach((L, j) => { if (left[j]-- > 0) order.push(L); });
+      // placeholder balls already sit in the machine and the graded ones land on top;
+      // the close-up reuses the same balls and the same spots in the pile
+      const fill = Math.max(0, Math.min(18, Math.round(24 - 1.5 * order.length)));
+      this.balls = Array(fill).fill(null).concat(order);
+      this.bs = this.balls.length > 26 ? Math.max(.26, Math.sqrt(26 / this.balls.length)) : 1;   // ball size: big games shrink the balls so the pile stays in the glass
+      this.homes = this.pileHomes(this.balls.length);
+      for (let k = 0; k < fill; k++) { const c = this.mkBall(null, mini), h = this.homes[k]; Object.assign(c, { x: h.x, y: h.y, rot: h.r, sc: this.bs }); this.placeC(c); }
+      $('#glDim').classList.add('on'); $('#glMini').classList.add('on');
+      audio.sfx('whoosh');
+      await this.w(550);
+      owners.forEach(L => L.door.classList.add('open'));
+      const gap = Math.min(240, 2400 / Math.max(1, order.length));
+      await Promise.all(order.map(async (L, k) => {
+        await this.w(k * gap);
+        const t = document.createElement('div');
+        t.className = 'lc slabbed ten'; t.style.setProperty('--c', laneColor(L.i)); t.style.zIndex = 50;
+        t.innerHTML = `<div class="lc-label"></div><div class="lc-card">${creature(laneColor(L.i), L.i, 20)}</div>`;
+        this.gl.appendChild(t);
+        const lay = this.lay[L.i], x0 = lay.ox + GL.X.vault * lay.s, y0 = lay.oy + GL.BELT * lay.s;
+        const tok = { el: t, x: x0, y: y0, rot: 0, sc: lay.s };
+        // out of the vault and in one arc into the funnel on top of the machine, shrinking to fit it
+        const x1 = T.DX, y1 = T.DY + 20 * T.ms, cxm = (x0 + x1) / 2, cym = Math.max(12, Math.min(y0, y1) - 70), s1 = .85 * T.ms, spin = (x1 > x0 ? 1 : -1) * 360;
+        audio.sfx('toss');
+        await this.tw(620 + Math.hypot(x1 - x0, y1 - y0) * .5, e => {
+          const u = 1 - e;
+          tok.x = u * u * x0 + 2 * u * e * cxm + e * e * x1;
+          tok.y = u * u * y0 + 2 * u * e * cym + e * e * y1;
+          tok.sc = lay.s + (s1 - lay.s) * e; tok.rot = spin * e;
+          t.style.opacity = 1 - Math.max(0, e - .8) / .2;
+          this.place(tok);
+        });
+        t.remove();
+        hop.classList.remove('pulse'); void hop.offsetWidth; hop.classList.add('pulse'); audio.sfx('plink');
+        const c = this.mkBall(L, mini), h = this.homes[fill + k];
+        Object.assign(c, { x: 287, y: 84, sc: .8 * this.bs, rot: 0 }); this.placeC(c);
+        await this.tw(520, e => { c.x = 287 + (h.x - 287) * e; c.y = 84 + (h.y - 84) * e * e; c.sc = this.bs * (.8 + .2 * e); c.rot = h.r * e; this.placeC(c); }, linear);
+        await this.tw(140, e => { c.y = h.y - Math.sin(e * Math.PI) * 5; this.placeC(c); }, linear);
+      }));
+      owners.forEach(L => L.door.classList.remove('open'));
+      await this.w(300);
+    },
+    // the floor goes fully dark and the machine grows until it fills the frame exactly like the close-up
+    async zoomIn(){
+      audio.sfx('whoosh');
+      const g = $('#glFit'), gl = this.gl, T = this.tr, w = stage.clientWidth;
+      const k0 = fitK(w, GL.W, this.H, GL_PAD), kf = fitK(w, FC.W, FC.H), box = $('#glBox');
+      const s0 = k0, s1 = kf / T.ms, x0 = this.cam.x, x1 = T.MX0, y1 = T.MY0;
+      const w0 = GL.W * k0, w1 = FC.W * kf, h0 = this.H * k0, h1 = FC.H * kf - 2;
+      const dim = $('#glDim'); dim.style.transition = 'none';
+      this.zooming = true;
+      await this.tw(1100, e => {
+        dim.style.opacity = .78 + .22 * Math.min(1, e * 2);
+        gl.style.transform = `scale(${s0 * Math.pow(s1 / s0, e)}) translate(${-(x0 + (x1 - x0) * e)}px,${-(y1 * e)}px)`;
+        g.style.width = (w0 + (w1 - w0) * e) + 'px';
+        box.style.padding = (GL_PAD * (1 - e)) + 'px';   // the padding closes up so the close-up lands edge to edge
+        g.style.height = (h0 + (h1 - h0) * e) + 'px';
+      });
+    },
+    // same machine, same balls: the close-up fades in on top and adds the player, odds and podium
+    async switchToClaw(owners, W){
+      this.buildFinale(owners, W);
+      const g = $('#glFit'), f = $('#fcFit');
+      Object.assign(f.style, { position: 'absolute', left: '0', right: '0', top: '0', bottom: '0', marginBlock: 'auto', opacity: '0', transition: 'opacity .5s' });
+      void f.offsetWidth; f.style.opacity = '1';
+      await wait(520);
+      g.parentElement.remove(); this.gl = null; this.zooming = false;
+      Object.assign(f.style, { position: '', left: '', right: '', top: '', bottom: '', transition: '' });
+    },
+
+    /* ---- the claw machine: every ball shows its owner's initial ---- */
+    buildFinale(owners, W){
+      this.pl = makePlayer();
+      stage.insertAdjacentHTML('beforeend', `<div class="fc-fit" id="fcFit"><div class="fc" id="fc">
+        <div class="fc-floor"></div>
+        ${Array.from({ length: W }, (_, i) => `<div class="fc-place" id="fp${i}" style="top:${34 + i * 70}px"><em>${ordinal(i + 1)}</em><span class="av"></span><span class="who"><b>?</b><span>Waiting</span></span></div>`).join('')}
+        <div class="fc-odds"><small>BALLS · ODDS</small><ol>${owners.slice().sort((a, b) => b.count - a.count).slice(0, owners.length > 12 ? 11 : 12).map(L =>
+          `<li id="fo${L.i}"><em>${initial(L.n)}</em><b>${esc(L.n)}</b><i>×${L.count}</i><span></span></li>`).join('')}${owners.length > 12 ? `<li class="more">+${owners.length - 11} more</li>` : ''}</ol></div>
+        ${machineHTML(false)}
+        ${this.pl.svg}
+        <div class="fc-bubble" id="fcBubble"></div>
+        <div class="fc-dim" id="fcDim"></div>
+        <div class="fc-rays" id="fcRays"></div>
+        <div class="fc-name" id="fcName"></div>
+        <div class="fc-flash" id="fcFlash"></div>
+      </div></div>`);
+      this.fc = $('#fc'); this.rig = this.fc.querySelector('.fc-rig'); this.fit();
+      this.rig.appendChild($('#fcPlayer'));   // the player stands in the machine's own coordinates
+      Object.assign($('#fcBubble').style, { left: (this.pl.head.x - 28) + 'px', top: (this.pl.head.y - 78) + 'px' });
+      Object.assign(this, {
+        fcClaw: $('#fcClaw'), fcRope: $('#fcRope'), stick: $('#fcStick'), btn: $('#fcBtn'), ledEl: $('#fcLed'),
+        bubbleEl: $('#fcBubble'), headEl: $('#fcHead'), marquee: $('#fcMarquee'), flap: $('#fcFlap'),
+        dim: $('#fcDim'), rays: $('#fcRays'), nameEl: $('#fcName'), flash: $('#fcFlash')
+      });
+      this.armPos = { L: { ...this.pl.rest.L }, R: { ...this.pl.rest.R } };
+      this.pose = false; this.armKey = {};
+      this.setArm('L', this.pl.rest.L.x, this.pl.rest.L.y);
+      this.caps = this.balls.map((L, k) => {
+        const c = this.mkBall(L, this.rig), h = this.homes[k];
+        c.home = h; Object.assign(c, { x: h.x, y: h.y, rot: h.r, sc: this.bs }); this.placeC(c);
+        return c;
+      });
+      this.updateOdds();
+      this.cs = { x: 310, rope: 8, held: null, tilt: 0 };
+      this.renderC();
+    },
+    // stack balls from the floor up, 7 to a row, with a little jitter
+    inPile(){ return this.caps.filter(c => !c.gone && !c.lifted); },
+    layoutPile(){
+      // gravity: balls keep their x and drop onto whatever is still below them; a ball that drops a fair way rolls a little
+      const live = this.inPile().sort((a, b) => b.home.y - a.home.y), placed = [];
+      for (const c of live) {
+        const y = this.restY(c.home.x, placed);
+        c.home = { x: c.home.x, y, r: y - c.home.y > 4 ? c.home.r + rand(-35, 35) : c.home.r };
+        placed.push(c.home);
+      }
+    },
+    async settle(){
+      await Promise.all(this.inPile().map(async c => {
+        const x0 = c.x, y0 = c.y, r0 = c.rot, h = c.home, drop = h.y - y0;
+        if (Math.abs(drop) < .5 && Math.abs(h.x - x0) < .5) return;
+        await this.tw(Math.min(520, 220 + Math.abs(drop) * 6), k => { c.x = x0 + (h.x - x0) * k; c.y = y0 + drop * k; c.rot = r0 + (h.r - r0) * k; this.placeC(c); }, easeIn);
+        if (drop > 6) await this.tw(150, k => { c.y = h.y - Math.sin(k * Math.PI) * Math.min(5, drop * .15); this.placeC(c); }, linear);
+      }));
+    },
+    // drop a loose ball onto the pile: it lands where it falls, then rolls a bit down the slope
+    async dropOnPile(c, roll){
+      c.lifted = false;
+      const others = this.inPile().filter(o => o !== c).map(o => o.home);
+      const clampX = x => Math.min(364, Math.max(232, x));
+      const ix = clampX(c.x), iy = this.restY(ix, others);
+      const fy = c.y, fx = c.x, r0 = c.rot;
+      await this.tw(Math.min(520, 260 + Math.max(0, iy - fy) * 1.6), k => { c.y = fy + (iy - fy) * k; c.x = fx + (ix - fx) * k; c.rot = r0 + 40 * k; this.placeC(c); }, easeIn);
+      const nx = clampX(ix + rand(-roll, roll)), ny = this.restY(nx, others), r1 = c.rot;
+      await this.tw(260 + Math.abs(nx - ix) * 5, k => {
+        c.x = ix + (nx - ix) * k; c.y = iy + (ny - iy) * k - Math.sin(k * Math.PI) * 8;
+        c.rot = r1 + (nx - ix) * 3 * k; this.placeC(c);
+      }, linear);
+      c.home = { x: nx, y: ny, r: c.rot };
+      this.layoutPile(); await this.settle();
+    },
+    // odds for the prize being played: your balls in play / all balls in play
+    updateOdds(){
+      const live = this.caps.filter(c => !c.gone && c.L && !c.L.place), tot = live.length;
+      for (const L of this.owners_) {
+        const row = this.fc.querySelector('#fo' + L.i); if (!row) continue;
+        const mine = live.filter(c => c.L === L).length;
+        row.querySelector('span').textContent = L.place ? ordinal(L.place) : `${Math.round(mine / Math.max(1, tot) * 100)}%`;
+        row.classList.toggle('placed', !!L.place);
+      }
+    },
+    placeC(c){ c.el.style.transform = `translate(${c.x}px,${c.y}px) rotate(${c.rot}deg) scale(${c.sc})`; },
+    setArm(side, x, y){
+      this.armPos[side] = { x, y };
+      const key = x.toFixed(2) + ',' + y.toFixed(2), g = this.fc.querySelector('#fcArm' + side);
+      if (!g || this.armKey[side] === key) return;
+      this.armKey[side] = key;
+      g.innerHTML = pArm(side === 'L' ? P_FAR : P_NEAR, plBox(x, y), this.pl.look);
+    },
+    renderC(){
+      const c = this.cs;
+      this.fcClaw.style.transform = `translateX(${c.x - 30}px)`;
+      this.fcRope.style.height = c.rope + 'px';
+      if (c.held) { const s = c.held; s.x = c.x - 13; s.y = FC.RAIL + c.rope + 24; s.rot = 0; s.sc = this.bs; this.placeC(s); }
+      this.stick.style.transform = `rotate(${c.tilt}deg)`;
+      if (!this.pose) { const th = c.tilt * Math.PI / 180, g = handAt(GRIP.x + GRIP.len * Math.sin(th), GRIP.y - GRIP.len * Math.cos(th)); this.setArm('R', g.x, g.y); }
+    },
+    async moveX(to){
+      const from = this.cs.x, d = to - from;
+      this.cs.tilt = Math.sign(d) * 22;
+      audio.motor(true);
+      await this.tw(Math.abs(d) / 230 * 1000 + 250, k => { this.cs.x = from + d * k; this.renderC(); });
+      audio.motor(false);
+      this.cs.tilt = 0; this.renderC();
+    },
+    async moveRope(to, ms){
+      const from = this.cs.rope;
+      audio.motor(true);
+      await this.tw(ms, k => { this.cs.rope = from + (to - from) * k; this.renderC(); });
+      audio.motor(false);
+    },
+    setOpen(o){ if (!o) audio.sfx('clank'); this.fcClaw.classList.toggle('open', o); return this.w(300); },
+    led(t){ this.ledEl.textContent = t; },
+    bubble(text, win, ms = 1100){
+      const b = this.bubbleEl;
+      b.textContent = text; b.className = 'fc-bubble show' + (win ? ' win' : '');
+      clearTimeout(this.bubbleT);
+      this.bubbleT = setTimeout(() => b.classList.remove('show'), ms);
+    },
+    face(kind, ms){
+      const pl = this.fc.querySelector('#fcPlayer');
+      pl.classList.remove('sad', 'happy');
+      if (kind) pl.classList.add(kind);
+      clearTimeout(this.faceT);
+      if (ms) this.faceT = setTimeout(() => pl.classList.remove(kind), ms);
+    },
+    head(kind){ const h = this.headEl; h.classList.remove('no', 'yes'); h.getBoundingClientRect(); h.classList.add(kind); },
+    groan(){
+      if (Math.random() < .6) this.bubble(pick(['So close!', 'Nooo!', 'It slipped!', 'Come on…', 'Almost!']));
+      this.head('no'); this.face('sad', 1000);
+    },
+    // the left hand, resting on the grab button, lifts a little and presses it
+    async pressButton(){
+      const at = dy => { const b = handAt(BTN.x, BTN.y + dy); this.setArm('L', b.x, b.y); };
+      await this.tw(130, k => at(-7 * k));
+      await this.tw(80, k => at(-7 + 11 * k), easeIn);
+      audio.sfx('click'); this.btn.classList.add('down');
+      await this.w(120);
+      this.btn.classList.remove('down');
+      await this.tw(120, k => at(4 - 4 * k));
+    },
+    // one grab at one ball; `success` was rolled beforehand at the grab chance
+    async attempt(c, success){
+      await this.moveX(c.home.x + 13);
+      await this.pressButton();
+      const grab = c.home.y - FC.RAIL - 24;
+      await this.moveRope(grab, 700);
+      await this.setOpen(false);
+      const kind = success ? 'win' : pick(['whiff', 'slip', 'slip', 'carry', 'carry']);
+      if (kind === 'whiff') {
+        // the claws close on nothing and the ball squirts out sideways
+        await this.tw(320, k => { c.x = c.home.x + Math.sin(k * Math.PI) * 7; c.rot = c.home.r + 30 * k; this.placeC(c); }, linear);
+        c.home.r = c.rot;
+        this.fcClaw.classList.add('open');
+        say('The claw closes on nothing.', true);
+        audio.sfx('whiff');
+        this.groan();
+        await this.moveRope(8, 650);
+        await this.w(250);
+        return;
+      }
+      this.cs.held = c; c.el.classList.add('held'); this.renderC();
+      // once the ball is off the pile, the balls resting on it tumble into the hole
+      c.lifted = true;
+      this.w(220).then(() => { this.layoutPile(); this.settle(); });
+      if (kind === 'slip') {
+        await this.moveRope(8 + (grab - 8) * rand(.3, .75), 700);
+        this.cs.held = null; c.el.classList.remove('held'); this.fcClaw.classList.add('open');
+        say(`Slipped! The ${esc(initial(c.L.n))} ball drops back into the pile.`, true);
+        audio.sfx('slip');
+        this.groan();
+        await this.dropOnPile(c, 22);
+        await this.moveRope(8, 400);
+        await this.w(150);
+        return;
+      }
+      await this.moveRope(8, 1000);
+      if (kind === 'carry') {
+        // it looks like it's going in… then the ball drops partway to the chute
+        this.face('happy'); this.bubble(pick(['Got it…?', 'Yes… yes…', 'Come on…']));
+        // gives up at a random point on the way to the chute
+        const x0 = this.cs.x, stop = Math.min(360, Math.max(250, x0 + (FC.CHUTE - x0) * rand(.15, .8)));
+        await this.moveX(stop);
+        this.cs.held = null; c.el.classList.remove('held'); this.fcClaw.classList.add('open');
+        say(`Nooo! The ${esc(initial(c.L.n))} ball falls out on the way to the chute.`, true);
+        audio.sfx('boing');
+        this.groan();
+        await this.dropOnPile(c, 45);
+        await this.w(150);
+        return;
+      }
+      await this.moveX(FC.CHUTE);
+      await this.w(200);
+      this.cs.held = null; c.el.classList.remove('held'); this.fcClaw.classList.add('open');
+      const fy = c.y;
+      await this.tw(380, k => { c.y = fy + (360 - fy) * k; this.placeC(c); }, easeIn);
+      audio.sfx('thunk');
+      c.gone = true;
+    },
+    sparks(x, y){
+      const bits = Array.from({ length: 30 }, () => {
+        const el = document.createElement('div'); el.className = 'spark'; this.fc.appendChild(el);
+        const a = rand(0, Math.PI * 2), v = rand(120, 320);
+        el.style.background = pick(['#f8c33a', '#ffffff', '#fcd34d', '#f29d16']);
+        return { el, vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: rand(0, 360) };
+      });
+      this.tw(1200, k => bits.forEach(b => {
+        b.el.style.transform = `translate(${x + b.vx * k}px,${y + b.vy * k + 90 * k * k}px) rotate(${b.r + 540 * k}deg)`;
+        b.el.style.opacity = 1 - k;
+      }), linear).then(() => bits.forEach(b => b.el.remove()));
+    },
+    // the ball rolls out of the prize slot onto the floor, then rises to center stage and bursts open
+    async reveal(c, L, place, odds){
+      this.flap.classList.add('open');
+      audio.sfx('flap');
+      await this.w(260);
+      // the ball peeks out of the prize slot, then flies straight to center stage in front of everything
+      c.el.remove();
+      const hb = document.createElement('div');
+      hb.className = 'cap hires glow';
+      hb.innerHTML = `<i class="ct"></i><i class="cb"></i><b>${esc(initial(L.n))}</b>`;
+      this.fc.appendChild(hb);
+      // 130px ball positioned by its center; small-ball size 26 * 1.3 at the slot, full size at center stage
+      const door = project(206, 368), ball = { el: hb, x: door.x - 65, y: door.y - 65, sc: 1.3 * 26 / 130, rot: 0, flat: true };
+      this.placeC(ball);
+      await this.tw(360, k => { ball.rot = Math.sin(k * Math.PI * 4) * 14; this.placeC(ball); }, linear);
+      say('A ball pops out of the prize slot…', true);
+      this.dim.classList.add('on');
+      const x0 = ball.x, y0 = ball.y, s0 = ball.sc, cx = 410 - 65, cy = 196 - 65;
+      await this.tw(950, k => {
+        ball.x = x0 + (cx - x0) * k;
+        ball.y = (1 - k) * (1 - k) * y0 + 2 * (1 - k) * k * (cy + 30) + k * k * cy;
+        ball.sc = s0 + (1 - s0) * k; ball.rot = 360 * k; this.placeC(ball);
+      });
+      this.flap.classList.remove('open');
+      ball.rot = 0;
+      this.rays.classList.add('on');
+      audio.sfx('riser');
+      await this.tw(900, k => { ball.rot = Math.sin(k * Math.PI * 12) * 9 * k; this.placeC(ball); }, linear);
+      audio.sfx('boom');
+      this.tw(120, k => this.flash.style.opacity = k, linear).then(() => this.tw(750, k => this.flash.style.opacity = 1 - k, linear));
+      await this.w(110);
+      hb.classList.add('open');
+      this.sparks(410, 196);
+      this.nameEl.innerHTML = `<small>${ordinal(place).toUpperCase()} PLACE</small><div class="av">${creature(laneColor(L.i), L.i, 64)}</div><b>${esc(L.n)}</b><span>${L.count} ball${L.count === 1 ? '' : 's'} · ${odds}% odds</span>`;
+      this.nameEl.classList.add('on');
+      audio.sfx('fanfare');
+      say(`${ordinal(place)} place: ${B(L.n)}!`, true);
+      await this.w(2100);
+      this.nameEl.classList.remove('on'); this.dim.classList.remove('on'); this.rays.classList.remove('on');
+      hb.remove();
+      const slot = this.fc.querySelector('#fp' + (place - 1));
+      slot.querySelector('.av').innerHTML = creature(laneColor(L.i), L.i, 26);
+      slot.querySelector('.who b').textContent = L.n;
+      slot.querySelector('.who span').textContent = `${L.count} ball${L.count === 1 ? '' : 's'}`;
+      slot.classList.add('won');
+      await this.w(350);
+    },
+    async celebrate(final){
+      const l0 = { ...this.armPos.L }, r0 = { ...this.armPos.R };
+      this.pose = true;
+      this.face('happy'); this.head('yes');
+      const { L: upL, R: upR } = this.pl.up;
+      await this.tw(280, k => {
+        this.setArm('L', l0.x + (upL.x - l0.x) * k, l0.y + (upL.y - l0.y) * k);
+        this.setArm('R', r0.x + (upR.x - r0.x) * k, r0.y + (upR.y - r0.y) * k);
+      });
+      if (final) return;
+      await this.w(700);
+      const l1 = { ...this.armPos.L }, r1 = { ...this.armPos.R };
+      const rs = this.pl.rest;
+      await this.tw(280, k => {
+        this.setArm('L', l1.x + (rs.L.x - l1.x) * k, l1.y + (rs.L.y - l1.y) * k);
+        this.setArm('R', r1.x + (rs.R.x - r1.x) * k, r1.y + (rs.R.y - r1.y) * k);
+      });
+      this.pose = false; this.face(''); this.renderC();
+    },
+    async finale(P){
+      const owners = this.lanes.filter(L => L.count > 0);
+      this.owners_ = owners;
+      say(`Grading closed. ${this.total} graded slab${this.total === 1 ? '' : 's'} headed for the claw machine.`, true);
+      await this.transfer();
+      await this.zoomIn();
+      const W = Math.min(P.W, owners.length);
+      await this.switchToClaw(owners, W);
+      say(`${this.total} ball${this.total === 1 ? '' : 's'} in the machine. Every grab has a ${Math.round(GRAB * 100)}% chance to hold.`, true);
+      await this.w(500);
+      const podium = [];
+      let tries = 0, last = null;
+      for (let place = 1; place <= W; place++) {
+        this.led(`${ordinal(place).toUpperCase()} PLACE`);
+        say(place === 1 ? 'Going for 1st place…' : `Going for ${ordinal(place)} place…`, true);
+        let c, misses = 0;
+        while (true) {
+          // a random ball still in play; after a miss the claw moves on to a different one
+          const pool = this.caps.filter(o => !o.gone && o.L && !o.L.place);
+          const choices = pool.length > 1 ? pool.filter(o => o !== last) : pool;
+          c = pick(choices); last = c;
+          const decided = new Set(pool.map(o => o.L)).size === 1;
+          const ok = decided || misses >= MAX_MISSES || Math.random() < GRAB;
+          tries++;
+          await this.attempt(c, ok);
+          if (ok) break;
+          misses++;
+        }
+        const L = c.L, inPlay = this.caps.filter(o => (!o.gone || o === c) && o.L && !o.L.place);
+        const odds = Math.round(inPlay.filter(o => o.L === L).length / inPlay.length * 100);
+        L.place = place;
+        podium.push(L);
+        await this.reveal(c, L, place, odds);
+        // their other balls stay in the machine looking the same; the claw just skips them from now on
+        this.updateOdds();
+        this.layoutPile(); await this.settle();
+        if (place === W) {
+          this.led('WINNER');
+          this.marquee.classList.add('party');
+          this.bubble(place === 1 ? 'GOT IT!' : 'All done!', true, 2200);
+          await this.celebrate(true);
+          await this.w(700);
+        } else {
+          this.bubble(`${ordinal(place)} place!`, true);
+          await this.celebrate(false);
+        }
+      }
+      return { podium, tries };
+    },
+
+    async run(list){
+      const P = this.plan(list.length);
+      await this.grading(P);
+      const { podium, tries } = await this.finale(P);
+      const first = podium[0];
+      return {
+        podium: podium.map(L => L.n),
+        detail: `${first.n} had ${first.count} of ${this.total} ball${this.total === 1 ? '' : 's'} in the claw machine (${Math.round(first.count / this.total * 100)}% odds). The claw took ${tries} grab${tries === 1 ? '' : 's'} in total.`
+      };
+    }
+  };
+
+  const MODES = { grade: gradeMode };
+
+  function build(){
+    const list = entrants().slice(0, MAX_PLAYERS);
+    const m = MODES[mode];
+    document.querySelectorAll('.mode').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === mode));
+    m.build(list.length ? list : ['Add names']);
+    const n = Math.max(2, Math.min(12, list.length)), est = Math.round(m.estimate ? m.estimate(n) : gameLen);
+    $('#lenLabel').textContent = m.lenLabel || 'Game length';
+    if (m.note) $('#lenNote').innerHTML = m.note(n);
+    else $('#lenNote').innerHTML = est > gameLen * 1.15
+      ? `${m.title} with ${Math.min(winnersN, n)} winner${Math.min(winnersN, n) === 1 ? '' : 's'} needs about <b>${est}s</b> at normal speed.`
+      : `Each game takes about <b>${est}s</b>.`;
+    return list;
+  }
+
+  const PLAY_ICON = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg>';
+  const STOP_ICON = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><rect x="2.5" y="2.5" width="9" height="9" rx="1.5" fill="currentColor"/></svg>';
+  function setUI(){
+    $('#shuffle').disabled = running;
+    [['#start', 'Start', 'Stop'], ['#navStart', 'Start game', 'Stop game']].forEach(([sel, on, off]) => {
+      const b = $(sel);
+      b.classList.toggle('is-stop', running);
+      b.innerHTML = `${running ? STOP_ICON : PLAY_ICON} ${running ? off : on}`;
+    });
+    namesEl.readOnly = running;
+    document.querySelectorAll('.mode, .seg button').forEach(b => b.disabled = running);
+  }
+
+  async function banner(text, ms){
+    const el = document.createElement('div');
+    el.className = 'countdown banner';
+    el.innerHTML = `<span>${esc(text)}</span>`;
+    stage.appendChild(el);
+    await wait(ms);
+    el.remove();
+  }
+
+  async function countdown(){
+    const el = document.createElement('div');
+    el.className = 'countdown';
+    stage.appendChild(el);
+    for (const t of ['3', '2', '1', 'GO']) {
+      el.innerHTML = `<span>${t}</span>`;
+      audio.sfx(t === 'GO' ? 'go' : 'beep');
+      await wait(t === 'GO' ? 450 : 700);
+    }
+    el.remove();
+  }
+
+  async function start(){
+    if (running) return;
+    hideWinner();
+    const list = entrants().slice(0, MAX_PLAYERS);
+    if (list.length < 2) { say('Add at least two names to race.', true); namesEl.focus(); return; }
+    running = true; setUI();
+    audio.init(); audio.musicOn();
+    build();
+    MODES[mode].revealMoods?.();
+    $('#stage').scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' });
+    setStatus('live');
+    $('#clock').textContent = '0.0s';
+    await countdown();
+    clockT0 = performance.now();
+    const tick = () => {
+      const s = (performance.now() - clockT0) / 1000;
+      $('#clock').textContent = s.toFixed(1) + 's';
+    };
+    clockTimer = setInterval(tick, 100);
+    const res = await MODES[mode].run(list);
+    clearInterval(clockTimer);
+    setStatus('done');
+    await wait(600);
+    running = false; setUI();
+    audio.musicOff(7);
+    finish(res);
+  }
+
+  // Stop: drop the game in progress and put the floor back to Ready (no winner is recorded)
+  function stop(){
+    if (!running) return;
+    gen++;
+    clearInterval(clockTimer);
+    audio.motor(false); audio.sfx('stop'); audio.musicOff(1.2);
+    running = false; setUI();
+    setStatus('ready'); $('#clock').textContent = '0.0s';
+    build();
+  }
+
+  function finish(res){
+    const label = MODES[mode].label, podium = res.podium;
+    const rest = podium.slice(1).map((n, i) => `${ordinal(i + 2)} ${n}`).join(', ');
+    results.unshift({ name: podium[0], mode: label, detail: res.detail + (rest ? ` Podium: ${rest}.` : ''), at: Date.now() });
+    results = results.slice(0, 8);
+    store.set('gd-results', results);
+    renderResults();
+    if ($('#removeWinner').checked) {
+      const names = new Set(podium);
+      namesEl.value = namesEl.value.split('\n').filter(l => !names.has(l.trim().slice(0, 24))).join('\n');
+      store.set('gd-names', namesEl.value); updateCount();
+    }
+    $('#winEyebrow').textContent = `Winner · ${label}`;
+    $('#winName').textContent = podium[0];
+    $('#winDetail').textContent = res.detail;
+    const pod = $('#winPodium');
+    pod.innerHTML = podium.slice(1).map((n, i) => `<li><span>${ordinal(i + 2)}</span><b>${esc(n)}</b></li>`).join('');
+    pod.hidden = podium.length < 2;
+    $('#winner').hidden = false;
+    $('#again').focus();
+    confetti();
+  }
+  function hideWinner(){ $('#winner').hidden = true; }
+
+  function renderResults(){
+    const ul = $('#results');
+    if (!results.length) { ul.innerHTML = '<li class="empty">No games yet. Winners show up here.</li>'; return; }
+    ul.innerHTML = results.map(r => {
+      const d = new Date(r.at);
+      const when = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+      return `<li><span class="who">${esc(r.name)}</span><span class="when">${when}</span><span class="what">${esc(r.mode)} · ${esc(r.detail)}</span></li>`;
+    }).join('');
+  }
+
+  function confetti(){
+    if (reduced) return;
+    const c = $('#fx'), ctx = c.getContext('2d'), dpr = devicePixelRatio || 1;
+    c.width = innerWidth * dpr; c.height = innerHeight * dpr; ctx.scale(dpr, dpr);
+    const cols = ['#f8c33a', '#fcd34d', '#f29d16', '#ffffff', '#5ad1a6'];
+    const ps = Array.from({ length: 150 }, () => ({
+      x: innerWidth / 2 + rand(-60, 60), y: innerHeight * .4, vx: rand(-8, 8), vy: rand(-13, -4),
+      w: rand(5, 10), h: rand(3, 6), r: rand(0, 6), vr: rand(-.3, .3), c: pick(cols)
+    }));
+    const t0 = performance.now();
+    const f = now => {
+      ctx.clearRect(0, 0, innerWidth, innerHeight);
+      for (const p of ps) {
+        p.vy += .3; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore();
+      }
+      if (now - t0 < 2800) requestAnimationFrame(f); else ctx.clearRect(0, 0, innerWidth, innerHeight);
+    };
+    requestAnimationFrame(f);
+  }
+
+  /* wiring */
+  function bindSeg(sel, get, set){
+    const seg = $(sel);
+    const sync = () => seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.v === get())));
+    seg.addEventListener('click', e => {
+      const b = e.target.closest('button');
+      if (!b || running) return;
+      set(+b.dataset.v); sync();
+      setStatus('ready'); build();
+    });
+    sync();
+  }
+  if (![10, 20, 30, 60].includes(gameLen)) gameLen = 20;
+  if (![1, 2, 3].includes(winnersN)) winnersN = 3;
+  bindSeg('#segLen', () => gameLen, v => { gameLen = v; store.set('gd-len', v); });
+  bindSeg('#segWin', () => winnersN, v => { winnersN = v; store.set('gd-winners-v2', v); });
+  // sound controls (browsers only allow audio after a click, so the first click here also wakes the audio up)
+  const volBtn = $('#volBtn'), volSlider = $('#volSlider');
+  const syncVol = () => {
+    volSlider.value = Math.round(audio.vol * 100);
+    const off = audio.muted || audio.vol === 0;
+    volBtn.setAttribute('aria-pressed', String(off));
+    volBtn.setAttribute('aria-label', off ? 'Unmute sound' : 'Mute sound');
+  };
+  const saveVol = () => { store.set('gd-vol', audio.vol); store.set('gd-muted', audio.muted); audio.init(); if (running) audio.musicOn(); audio.apply(); syncVol(); };
+  volBtn.addEventListener('click', () => { audio.muted = !(audio.muted || audio.vol === 0); if (!audio.muted && audio.vol === 0) audio.vol = .6; saveVol(); });
+  volSlider.addEventListener('input', () => { audio.vol = volSlider.value / 100; audio.muted = audio.vol === 0; saveVol(); });
+  syncVol();
+  const startStop = () => running ? stop() : start();
+  $('#start').addEventListener('click', startStop);
+  $('#navStart').addEventListener('click', startStop);
+  $('#again').addEventListener('click', start);
+  $('#close').addEventListener('click', hideWinner);
+  $('#winner').addEventListener('click', e => { if (e.target.id === 'winner') hideWinner(); });
+  // full screen: the real thing when the browser allows it, otherwise the stage just fills the page
+  const fsBtn = $('#fsBtn');
+  const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
+  function setFS(on){
+    stageCard.classList.toggle('is-fs', on);
+    document.body.style.overflow = on ? 'hidden' : '';
+    // only the full-screen element is drawn, so the winner card and confetti move inside it
+    (on && fsEl() === stageCard ? stageCard : document.body).append($('#winner'), $('#fx'));
+    fsBtn.setAttribute('aria-pressed', String(on));
+    fsBtn.setAttribute('aria-label', on ? 'Exit full screen' : 'Enter full screen');
+    fsBtn.title = on ? 'Exit full screen' : 'Full screen';
+    // re-lay the lines for the new space (a game in progress keeps its layout and just rescales)
+    if (!running) build();
+    gradeMode.fit(); requestAnimationFrame(() => gradeMode.fit());
+  }
+  fsBtn.addEventListener('click', async () => {
+    if (stageCard.classList.contains('is-fs')) {
+      if (fsEl()) (document.exitFullscreen || document.webkitExitFullscreen).call(document); else setFS(false);
+      return;
+    }
+    const req = stageCard.requestFullscreen || stageCard.webkitRequestFullscreen;
+    if (!req) return setFS(true);
+    try { await req.call(stageCard); } catch { setFS(true); }
+  });
+  ['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, () => setFS(fsEl() === stageCard)));
+  addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (!$('#winner').hidden) hideWinner();
+    else if (stageCard.classList.contains('is-fs') && !fsEl()) setFS(false);
+  });
+  $('#shuffle').addEventListener('click', () => {
+    const l = namesEl.value.split('\n').filter(s => s.trim());
+    for (let i = l.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [l[i], l[j]] = [l[j], l[i]]; }
+    namesEl.value = l.join('\n'); store.set('gd-names', namesEl.value); updateCount(); build();
+  });
+  let buildTimer;
+  namesEl.addEventListener('input', () => {
+    store.set('gd-names', namesEl.value); updateCount();
+    clearTimeout(buildTimer); buildTimer = setTimeout(() => { if (!running) { setStatus('ready'); build(); } }, 250);
+  });
+  let lastW = 0;
+  addEventListener('resize', () => {
+    if (mode === 'grade') gradeMode.fit();
+    clearTimeout(buildTimer);
+    buildTimer = setTimeout(() => { if (!running && stage.clientWidth !== lastW) { lastW = stage.clientWidth; build(); } }, 200);
+  });
+
+  // staff mood legend, built from MOODS so it always matches the rules
+  const LEGEND_ICON = {
+    happy: '♫', sleepy: 'zz', bored: '…',
+    angry: '<svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><path d="M5 1 q0 4 -4 4 M9 1 q0 4 4 4 M1 9 q4 0 4 4 M13 9 q-4 0 -4 4" stroke="#ff4d45" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>'
+  };
+  // plain amounts here; the word after says which way (the lane tags keep their +/-)
+  const pct = n => `${Math.abs(n)}%`;
+  $('#legendBody').innerHTML = ['happy', 'sleepy', 'bored', 'angry'].map(k => {
+    const t = Math.round((MOODS[k].insp - 1) * 100), v = Math.round(MOODS[k].mod * 100);
+    return `<tr><th scope="row"><span class="lg-ic ${k}" aria-hidden="true">${LEGEND_ICON[k]}</span>${k[0].toUpperCase() + k.slice(1)}</th>
+      <td class="${t < 0 ? 'up' : 'down'}">${CLOCK_ICON}${pct(t)} <span>${t < 0 ? 'faster' : 'slower'}</span></td>
+      <td class="${v > 0 ? 'up' : 'down'}">${pct(v)} <span>${v > 0 ? 'more 10s' : 'fewer 10s'}</span></td></tr>`;
+  }).join('');
+
+  updateCount(); renderResults(); build(); lastW = stage.clientWidth;
+  say('Pick a format above, edit the entrants, then press <b>Start</b>.', true);
+})();
+</script>
+
+</body></html>
