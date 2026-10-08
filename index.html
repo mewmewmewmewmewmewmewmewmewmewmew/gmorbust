@@ -1673,11 +1673,11 @@
   const PKN = ["Bulbasaur", "Ivysaur", "Venusaur", "Charmander", "Charmeleon", "Charizard", "Squirtle", "Wartortle", "Blastoise", "Caterpie", "Metapod", "Butterfree", "Weedle", "Kakuna", "Beedrill", "Pidgey", "Pidgeotto", "Pidgeot", "Rattata", "Raticate", "Spearow", "Fearow", "Ekans", "Arbok", "Pikachu", "Raichu", "Sandshrew", "Sandslash", "Nidoran♀", "Nidorina", "Nidoqueen", "Nidoran♂", "Nidorino", "Nidoking", "Clefairy", "Clefable", "Vulpix", "Ninetales", "Jigglypuff", "Wigglytuff", "Zubat", "Golbat", "Oddish", "Gloom", "Vileplume", "Paras", "Parasect", "Venonat", "Venomoth", "Diglett", "Dugtrio", "Meowth", "Persian", "Psyduck", "Golduck", "Mankey", "Primeape", "Growlithe", "Arcanine", "Poliwag", "Poliwhirl", "Poliwrath", "Abra", "Kadabra", "Alakazam", "Machop", "Machoke", "Machamp", "Bellsprout", "Weepinbell", "Victreebel", "Tentacool", "Tentacruel", "Geodude", "Graveler", "Golem", "Ponyta", "Rapidash", "Slowpoke", "Slowbro", "Magnemite", "Magneton", "Farfetch'd", "Doduo", "Dodrio", "Seel", "Dewgong", "Grimer", "Muk", "Shellder", "Cloyster", "Gastly", "Haunter", "Gengar", "Onix", "Drowzee", "Hypno", "Krabby", "Kingler", "Voltorb", "Electrode", "Exeggcute", "Exeggutor", "Cubone", "Marowak", "Hitmonlee", "Hitmonchan", "Lickitung", "Koffing", "Weezing", "Rhyhorn", "Rhydon", "Chansey", "Tangela", "Kangaskhan", "Horsea", "Seadra", "Goldeen", "Seaking", "Staryu", "Starmie", "Mr. Mime", "Scyther", "Jynx", "Electabuzz", "Magmar", "Pinsir", "Tauros", "Magikarp", "Gyarados", "Lapras", "Ditto", "Eevee", "Vaporeon", "Jolteon", "Flareon", "Porygon", "Omanyte", "Omastar", "Kabuto", "Kabutops", "Aerodactyl", "Snorlax", "Articuno", "Zapdos", "Moltres", "Dratini", "Dragonair", "Dragonite", "Mewtwo", "Mew"];
   // a player whose username has one of those names in it gets that Pokémon. Only the letters count, in any case
   // ("Mr.Mime", "xXcharizardXx", "Team_Charizard"), and the longest name that fits wins ("mewtwo_fan" is Mewtwo, not Mew).
-  // A name of 4 letters or fewer only counts standing apart in the username as typed: the whole of it, or set off on
-  // both sides by a non-letter or a change of case ("Mew99", "mew_fan", "TeamMuk", "AbraKid"; not "Abraham" or
-  // "Mukesh"). Paras isn't in "parasite" or "parasol", nor Gloom in "gloomy"
+  // A name of PK_SHORT letters or fewer only counts standing apart in the username as typed: the whole of it, or set off
+  // on both sides by a non-letter or a change of case (at 2, no Gen 1 name is that short, so every name counts anywhere:
+  // "mewmewnami" is Mew). Paras isn't in "parasite" or "parasol", nor Gloom in "gloomy"
   const pkLetters = s => s.toLowerCase().replace(/[^a-z]/g, '');
-  const PKL = PKN.map(pkLetters), PK_NOT_BEFORE = { paras: /^(ite|ol)/, gloom: /^y/ };
+  const PKL = PKN.map(pkLetters), PK_NOT_BEFORE = { paras: /^(ite|ol)/, gloom: /^y/ }, PK_SHORT = 2;
   function pkMatch(name){
     const raw = String(name).normalize('NFD').replace(/[\u0300-\u036f]/g, ''), u = pkLetters(raw);
     const low = raw.replace(/[A-Z]/g, c => c.toLowerCase()), letter = c => /[A-Za-z]/.test(c || ''), up = c => /[A-Z]/.test(c);
@@ -1695,7 +1695,7 @@
     };
     let best = [], len = 0;   // (both Nidorans are "nidoran", so a match can be either)
     PKL.forEach((p, d) => {
-      if (p.length < len || !(p.length <= 4 ? apart(p) : inside(p))) return;
+      if (p.length < len || !(p.length <= PK_SHORT ? apart(p) : inside(p))) return;
       if (p.length > len) { best = []; len = p.length; }
       best.push(d);
     });
