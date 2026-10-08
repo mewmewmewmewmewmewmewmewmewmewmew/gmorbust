@@ -511,7 +511,8 @@
   .fc-odds li em{background:linear-gradient(180deg,#fbb65d,#f4904c);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
   @media (prefers-reduced-motion:reduce){ .pl .fx > g,.pl .fx-back > g,.mc .msign{animation:none} .led-marquee span.run{animation:none} }
   /* player icons: Pokémon menu sprites, scaled with hard pixels; official artwork on the showcase card */
-  .lc-card{border:2px solid var(--c);background:#f4f1e8}   /* the cards being graded: off-white, the player's colour as the border */
+  .lc-card{border:2px solid var(--c);background:color-mix(in srgb,var(--c) 50%,#fff)}   /* the cards being graded: the player's colour as the border, a 50%-lighter tint of it inside */
+  .lc.slabbed .lc-card .pka{margin:-1.5px;transform:scale(.857)}   /* the slab's window is 18px wide inside the border, so the 21px artwork shrinks to fit (the negative margin lets it centre in the window rather than hang off its right side) */
   .ln-row .lc-card .pka{display:none}   /* cards on the grid stay blank; the showcase's copy of the line shows the artwork */
   .gl-show-who .pk{margin-right:8px}
   .fc-odds li{grid-template-columns:18px minmax(0,1fr) 24px 32px}
@@ -732,9 +733,9 @@
         case 'miss': this.tone(r(200, 240), .18, { type: 'square', to: 140, gain: .12, lp: 1200 }); break;
         case 'press': this.noise(.22, { type: 'bandpass', freq: 1800, to: 500, q: .8, gain: .13 }); this.tone(95, .12, { gain: .2 }); break;
         case 'crack': this.noise(.09, { freq: 3500, gain: .28 }); this.noise(.35, { type: 'bandpass', freq: 6000, to: 2500, q: 2, gain: .11, at: .03 }); this.tone(1900, .18, { type: 'triangle', to: 500, gain: .05 }); break;
-        case 'toss': this.noise(.45, { type: 'bandpass', freq: 500, to: 2400, q: 1.2, gain: .22 }); break;
+        case 'toss': break;   // muted for now (was: this.noise(.45, { type: 'bandpass', freq: 500, to: 2400, q: 1.2, gain: .22 }))
         case 'pop': this.tone(r(650, 750), .09, { to: 1300, gain: .24 }); this.tone(1400, .06, { type: 'triangle', gain: .07, at: .06 }); break;
-        case 'whoosh': this.noise(.9, { type: 'bandpass', freq: 300, to: 3000, q: .9, gain: .3 }); break;
+        case 'whoosh': break;   // muted for now (was: this.noise(.9, { type: 'bandpass', freq: 300, to: 3000, q: .9, gain: .3 }))
         case 'plink': this.tone(r(1400, 2000), .09, { type: 'triangle', gain: .15 }); break;
         case 'click': this.tone(2200, .025, { type: 'square', gain: .14, lp: 6000 }); break;
         case 'clank': this.tone(320, .09, { type: 'square', to: 210, gain: .15, lp: 2000 }); this.noise(.05, { freq: 2500, gain: .16 }); break;
@@ -810,7 +811,12 @@
       this.bus.connect(this.tone_); this.tone_.connect(this.music);
       const tick = () => {
         if (!this.playing) return;
-        while (this.nextT < this.ctx.currentTime + .15) {
+        // if the page was too busy to keep up (building a scene, say), the steps it missed are skipped, rather than all
+        // played at once, late (they piled up into one loud hit, like a random clap)
+        const now = this.ctx.currentTime;
+        while (this.nextT < now) { this.nextT += 60 / (98 + 34 * this.e) / 4; this.step++; }
+        // (scheduled .3s ahead, so a short stall doesn't get that far)
+        while (this.nextT < now + .3) {
           const sixteenth = 60 / (98 + 34 * this.e) / 4;   // ~101 BPM chill .. 132 full on
           this.playStep(this.step, this.nextT, sixteenth); this.nextT += sixteenth; this.step++;
         }
@@ -836,14 +842,12 @@
       this.building = true; this.buildT0 = this.ctx.currentTime; this.buildFrom = this.energy;
       this.noise(7, { type: 'bandpass', freq: 300, to: 7000, q: 1.4, gain: .09, attack: 6.5, dest: this.bus });
     },
-    // the claw machine appears: the drop (a crash and a low boom), then full on
+    // the claw machine appears: the music goes full on (no crash or bass drop, just the track opening up)
     drop(){
       if (!this.playing) return;
       this.building = false; this.energy = this.e = .9;
       const t = this.ctx.currentTime;
       this.tone_.frequency.cancelScheduledValues(t); this.tone_.frequency.setValueAtTime(16000, t);
-      this.noise(2, { freq: 4500, gain: .22, t, dest: this.bus });
-      this.tone(95, 1.3, { to: 34, gain: .7, t, dest: this.bus });
     },
     playStep(s, t, len){
       const bar = Math.floor(s / 16) % 4, i = s % 16, ch = PROG[bar], dest = this.bus;
@@ -2185,6 +2189,58 @@
       }
     },
     setIris(rig, a){ const pts = irisPoints(a); rig.querySelectorAll('.mhole polygon').forEach((p, i) => p.setAttribute('points', pts[i])); },
+    // the machine arrives from the inside out: we start inside its loading hole (shutter open, the hole see-through, so
+    // all there is to see is the floor) and it pulls back to its place on the floor, the hole darkening back to black.
+    // While it moves it's a picture of itself (redrawing all that art at every size is too slow): the machine with the
+    // hole cut out, and the hole (with whatever is in front of it) on its own, fading back in; the live machine takes
+    // over once it has landed
+    async emerge(rig){
+      const T = this.tr, m = $('#glMini'), svg = rig.querySelector('svg.mc');
+      const hole = toRig(HOLE.x, HOLE.y), hp = project(hole.x, hole.y);
+      const hx = T.MX0 + hp.x * T.ms, hy = T.MY0 + hp.y * T.ms, x0 = this.cam.x;   // where the hole ends up on the floor
+      // start big enough that the hole covers every corner of the floor in view
+      const D = Math.max(...[[x0, 0], [x0 + GL.W, 0], [x0, this.H], [x0 + GL.W, this.H]].map(([x, y]) => Math.hypot(x - hx, y - hy)));
+      const S0 = 1.06 * D / (HOLE.r * MS), S1 = T.ms;
+      this.setIris(rig, 1);
+      // the picture, at twice the detail it has on screen once landed (within reason)
+      const w = CG.view[0] * MS, h = CG.view[1] * MS, cx = HOLE.x * MS, cy = HOLE.y * MS, R = HOLE.r * MS + 1.5;
+      const px = Math.min(2 * S1 * fitK(stage.clientWidth, GL.W, this.H, GL_PAD) * (devicePixelRatio || 1), 4096 / h);
+      const c = svg.cloneNode(true); c.setAttribute('width', w * px); c.setAttribute('height', h * px); c.removeAttribute('style');
+      const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(c)], { type: 'image/svg+xml' }));
+      const img = new Image(); img.src = url;
+      // (drawn out to pixels now, while the floor dims, rather than on the first frame of the move)
+      let pic = img;
+      try { await img.decode(); pic = await createImageBitmap(img); } catch (e) {}
+      URL.revokeObjectURL(url);
+      const canvas = (cw, ch, l, t) => {
+        const k = document.createElement('canvas'); k.width = Math.round(cw * px); k.height = Math.round(ch * px);
+        // (each picture is its own layer, so moving and fading it never redraws anything)
+        k.style.cssText = `left:${MX + l}px;top:${MY + t}px;width:${cw}px;height:${ch}px;z-index:5;will-change:transform`; return k;
+      };
+      const A = canvas(w, h, 0, 0), B = canvas(2 * R, 2 * R, cx - R, cy - R);
+      let g = A.getContext('2d'); g.drawImage(pic, 0, 0, A.width, A.height);
+      g.globalCompositeOperation = 'destination-out'; g.beginPath(); g.arc(cx * px, cy * px, HOLE.r * MS * px, 0, 7); g.fill();
+      // (the hole's picture reaches a touch past the cut, so the two meet without a seam)
+      g = B.getContext('2d'); g.beginPath(); g.arc(R * px, R * px, R * px, 0, 7); g.clip();
+      g.drawImage(pic, -(cx - R) * px, -(cy - R) * px, A.width, A.height);
+      if (pic.close) pic.close();
+      // the live machine (and its LED sign, which comes on as it lands) waits out of sight
+      const live = [...rig.children];
+      live.forEach(e => e.style.visibility = 'hidden');
+      B.style.opacity = 0; rig.append(A, B);
+      m.style.transition = 'none'; m.classList.add('on');
+      const at = S => { m.style.transform = `translate(${hp.x * (S1 - S)}px,${hp.y * (S1 - S)}px) scale(${S})`; };
+      at(S0);
+      // (its first frame only shows the floor as it was, so let that one take as long as it needs before the move starts)
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      audio.sfx('whoosh');
+      await this.tw(1400, p => {
+        at(S0 * Math.pow(S1 / S0, p));
+        B.style.opacity = Math.max(0, Math.min(1, (p - .35) / .55)).toFixed(3);
+      }, k => 1 - Math.pow(1 - k, 3));
+      // landed: the live machine takes its place
+      m.style.transform = `scale(${S1})`; m.style.transition = ''; live.forEach(e => e.style.visibility = ''); A.remove(); B.remove();
+    },
     async transfer(){
       audio.build();
       const owners = this.owners_, T = this.tr, mini = this.gl.querySelector('#glMini .fc-rig'), sign = mini.querySelector('.msign');
@@ -2198,11 +2254,10 @@
       // so neither costs a stutter later
       this.buildFinale(owners, this.podiumN);
       this.gl.style.willChange = 'transform';
-      $('#glDim').classList.add('on'); $('#glMini').classList.add('on');
-      audio.sfx('whoosh');
-      await this.w(550);
+      $('#glDim').classList.add('on');
+      await this.emerge(mini);
       owners.forEach(L => L.door.classList.add('open'));
-      await this.tw(420, k => this.setIris(mini, k));   // the shutter in the back wall opens
+      await this.w(300);
       const gap = Math.min(240, 2400 / Math.max(1, order.length));
       await Promise.all(order.map(async (L, k) => {
         await this.w(k * gap);
