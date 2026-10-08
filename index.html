@@ -713,7 +713,7 @@
     noise(dur, o = {}){
       const ctx = this.ctx, t = o.t ?? ctx.currentTime + (o.at || 0);
       const src = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain(), peak = o.gain ?? .3;
-      src.buffer = this.noiseBuf;
+      src.buffer = this.noiseBuf; src.loop = true;
       f.type = o.type || 'highpass'; f.frequency.setValueAtTime(o.freq || 2000, t); f.Q.value = o.q || 1;
       if (o.to) f.frequency.exponentialRampToValueAtTime(o.to, t + dur);
       g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(peak, t + (o.attack || .003)); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
@@ -804,11 +804,16 @@
         return;
       }
       this.playing = true; this.step = 0; this.nextT = this.ctx.currentTime + .1;
-      this.bus = this.ctx.createGain(); this.bus.connect(this.music);
-      const sixteenth = 60 / BPM / 4;
+      this.energy = this.e = .12; this.building = false;
+      this.bus = this.ctx.createGain(); this.tone_ = this.ctx.createBiquadFilter();
+      this.tone_.type = 'lowpass'; this.tone_.frequency.value = 1800; this.tone_.Q.value = .7;
+      this.bus.connect(this.tone_); this.tone_.connect(this.music);
       const tick = () => {
         if (!this.playing) return;
-        while (this.nextT < this.ctx.currentTime + .15) { this.playStep(this.step, this.nextT, sixteenth); this.nextT += sixteenth; this.step++; }
+        while (this.nextT < this.ctx.currentTime + .15) {
+          const sixteenth = 60 / (98 + 34 * this.e) / 4;   // ~101 BPM chill .. 132 full on
+          this.playStep(this.step, this.nextT, sixteenth); this.nextT += sixteenth; this.step++;
+        }
       };
       this.timerId = setInterval(tick, 25); tick();
     },
@@ -823,17 +828,51 @@
         this.bus.gain.setValueAtTime(0, this.ctx.currentTime); this.bus.disconnect();
       }, fade * 1000 + 150);
     },
+    // where the game is: energy 0 (laid back) .. 1 (full on); the music eases toward it over a bar or so
+    setEnergy(x){ this.energy = Math.max(0, Math.min(1, x)); },
+    // loading the balls: build toward the drop (energy climbs over ~6s, a rising sweep, a snare roll that speeds up)
+    build(){
+      if (!this.playing || this.building) return;
+      this.building = true; this.buildT0 = this.ctx.currentTime; this.buildFrom = this.energy;
+      this.noise(7, { type: 'bandpass', freq: 300, to: 7000, q: 1.4, gain: .09, attack: 6.5, dest: this.bus });
+    },
+    // the claw machine appears: the drop (a crash and a low boom), then full on
+    drop(){
+      if (!this.playing) return;
+      this.building = false; this.energy = this.e = .9;
+      const t = this.ctx.currentTime;
+      this.tone_.frequency.cancelScheduledValues(t); this.tone_.frequency.setValueAtTime(16000, t);
+      this.noise(2, { freq: 4500, gain: .22, t, dest: this.bus });
+      this.tone(95, 1.3, { to: 34, gain: .7, t, dest: this.bus });
+    },
     playStep(s, t, len){
       const bar = Math.floor(s / 16) % 4, i = s % 16, ch = PROG[bar], dest = this.bus;
-      if (i % 4 === 0) this.tone(150, .3, { to: 42, gain: .55, t, dest });                                       // kick
-      if (i === 4 || i === 12) { this.noise(.16, { type: 'bandpass', freq: 1600, q: .8, gain: .22, t, dest }); this.noise(.1, { type: 'bandpass', freq: 1200, gain: .12, t: t + .012, dest }); }  // clap
-      if (i % 4 === 2) this.noise(.12, { freq: 7000, gain: .07, t, dest });                                      // open hat
-      else if (i % 2) this.noise(.035, { freq: 8500, gain: .045, t, dest });                                    // closed hat
-      if (BASS[i]) this.tone(mtof(ch.root + (BASS[i] === 2 ? 12 : 0)), len * 1.6, { type: 'sawtooth', lp: 650, gain: .2, t, dest });
+      if (this.building) this.energy = Math.min(.8, this.buildFrom + (.8 - this.buildFrom) * Math.min(1, (t - this.buildT0) / 6));
+      const e = this.e += (this.energy - this.e) * (this.building ? .5 : .08);
+      this.tone_.frequency.setTargetAtTime(1200 * Math.pow(16, e), t, .15);   // ~1.7kHz chill .. ~19kHz full on
+      // drums: a laid-back kick and finger snaps when chill; four on the floor and claps once it's up
+      if (e < .45 ? (i === 0 || i === 10) : i % 4 === 0) this.tone(150, .32, { to: 42, gain: e < .45 ? .4 : .55, t, dest });
+      if (i === 4 || i === 12) {
+        if (e < .55) this.noise(.09, { type: 'bandpass', freq: 2300, q: 2, gain: .1, t, dest });                           // snap
+        else { this.noise(.16, { type: 'bandpass', freq: 1600, q: .8, gain: .22, t, dest }); this.noise(.1, { type: 'bandpass', freq: 1200, gain: .12, t: t + .012, dest }); }  // clap
+      }
+      if (e >= .6 && i % 4 === 2) this.noise(.12, { freq: 7000, gain: .07, t, dest });                                   // open hat
+      else if (i % 2 === 0 || e >= .3) this.noise(.035, { freq: 8000, gain: e < .3 ? .025 : .04, t, dest });             // closed hat
+      // the build's snare roll: quarters, then eighths, then sixteenths
+      if (this.building) {
+        const k = Math.min(1, (t - this.buildT0) / 6), step = k < .35 ? 4 : k < .7 ? 2 : 1;
+        if (i % step === 0) this.noise(.08, { type: 'bandpass', freq: 1900, q: .9, gain: .05 + .1 * k, t, dest });
+      }
+      // bass: long round notes when chill, the bouncy pattern once it's up
+      if (e < .45) { if (i === 0 || i === 8 || i === 14) this.tone(mtof(ch.root), len * (i === 0 ? 6 : i === 8 ? 4 : 2), { type: 'triangle', lp: 500, gain: .24, attack: .02, t, dest }); }
+      else if (BASS[i]) this.tone(mtof(ch.root + (BASS[i] === 2 ? 12 : 0)), len * 1.6, { type: 'sawtooth', lp: 450 + 400 * e, gain: .2, t, dest });
+      // arpeggio: sparse and soft when chill, sixteenths once it's up
       const arp = [ch.c[0] + 12, ch.c[1] + 12, ch.c[2] + 12, ch.c[0] + 24];
-      this.tone(mtof(arp[ARP[i]]), len * .9, { type: 'square', lp: 3000, gain: .035, t, dest });
-      if (i === 0) ch.c.forEach(n => this.tone(mtof(n), len * 15, { type: 'triangle', gain: .03, attack: .08, t, dest }));  // pad
-      if ((bar === 1 || bar === 3) && HOOK[i] != null) {
+      if (e >= .55) this.tone(mtof(arp[ARP[i]]), len * .9, { type: 'square', lp: 2500 + 3000 * e, gain: .035, t, dest });
+      else if (e >= .18 && (i % 4 === 0 || i % 4 === 3)) this.tone(mtof(arp[ARP[i]]), len * 1.6, { type: 'triangle', lp: 2200, gain: .035, t, dest });
+      if (i === 0) ch.c.forEach(n => this.tone(mtof(n), len * 15, { type: 'triangle', gain: e < .5 ? .045 : .03, attack: e < .5 ? .3 : .08, t, dest }));  // pad
+      // the hook: on bars 2 and 4 once it's up, every bar when it's full on
+      if (e >= .55 && (e >= .8 || bar === 1 || bar === 3) && HOOK[i] != null) {
         const top = [ch.c[0] + 24, ch.c[1] + 24, ch.c[2] + 24, ch.c[1] + 24, ch.c[2] + 24][HOOK[i]];
         this.tone(mtof(top), len * 1.8, { type: 'triangle', gain: .06, t, dest });
       }
@@ -2103,6 +2142,7 @@
       const g = gen, timer = setInterval(() => {
         if (g !== gen) return clearInterval(timer);
         const rem = P.G - (performance.now() - t0) / 1000;
+        audio.setEnergy(.12 + .18 * Math.min(1, Math.max(0, 1 - rem / P.G)));
         if (!this.closed && !this.overtime) clk.textContent = fmtClock(Math.max(0, rem));
         if (rem <= 0 && !this.closed && !this.overtime) {
           if (this.owners() >= this.need) this.close();
@@ -2146,6 +2186,7 @@
     },
     setIris(rig, a){ const pts = irisPoints(a); rig.querySelectorAll('.mhole polygon').forEach((p, i) => p.setAttribute('points', pts[i])); },
     async transfer(){
+      audio.build();
       const owners = this.owners_, T = this.tr, mini = this.gl.querySelector('#glMini .fc-rig'), sign = mini.querySelector('.msign');
       const left = owners.map(L => L.count), order = [];
       while (order.length < this.total) owners.forEach((L, j) => { if (left[j]-- > 0) order.push(L); });
@@ -2220,6 +2261,7 @@
     },
     // same machine, same balls, now lined up exactly: the close-up (its lit backdrop, the player, the odds) fades in on top
     async switchToClaw(){
+      audio.drop();
       const g = $('#glFit'), f = $('#fcFit');
       f.style.transition = 'opacity .35s'; void f.offsetWidth; f.style.opacity = '1';
       await wait(370);
@@ -2480,6 +2522,7 @@
     },
     // the ball comes up out of the prize hole, flies to center stage, and splits along its seam to show who won
     async reveal(c, L, place, odds){
+      audio.setEnergy(1); this.w(6000).then(() => audio.setEnergy(.9));
       const r = BR - 2.6, e = r * .36, ink = '#2b303b';
       // (the seam always bows down here, like a smile)
       const top = `<path d="M${-r} 0 A${r} ${e} 0 0 0 ${r} 0 A${r} ${r} 0 0 0 ${-r} 0Z" fill="#fffaf3" stroke="${ink}" stroke-width="2.6" stroke-linejoin="round"/><ellipse cx="${-BR * .36}" cy="${-BR * .46}" rx="${BR * .28}" ry="${BR * .15}" fill="#fff" opacity=".85"/>`;
