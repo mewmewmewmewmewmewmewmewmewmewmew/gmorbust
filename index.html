@@ -3555,6 +3555,7 @@
      together onto a 1080 x 1240 video canvas (the wheel itself drawn at the video's detail while it records), with the
      game's sound; a couple of seconds after the result it stops, and the page offers the video to save ---- */
   const WR = { W: 1080, H: 1240, X: 60, Y: 110, D: 960 };
+  let whReel = null;   // (the reel's own layer in a recording)
   function whRecFrame(rc){
     const g = rc.getContext('2d'), { W, H, X, Y, D } = WR, S = whBox.clientWidth, u = D / S, c = D / 2;
     g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
@@ -3596,28 +3597,41 @@
     const cg = g.createLinearGradient(0, 39, 0, 62); cg.addColorStop(0, '#4c4c54'); cg.addColorStop(1, '#26262c');
     g.beginPath(); g.roundRect(44, 39, 32, 23, 5); g.fillStyle = cg; g.fill(); g.lineWidth = 2.6; g.strokeStyle = '#0f0f11'; g.stroke();
     g.restore();
-    // the result, under the wheel
+    // the result, under the wheel, set the way the page sets it: each name on a line 1.1em tall, its baseline where CSS
+    // puts it (the font's own ascent and descent centred in the line), its icon's foot .04em below that baseline and .18em
+    // before the name. While it spins, the reel shows through a one-line window that fades out at its top and bottom
     if (!whWin.classList.contains('idle')) {
-      const nm = $('#whWinName').textContent, ty = Y + D + 7;   // (the name's middle sits at ty + 78)
-      g.textAlign = 'center'; g.textBaseline = 'middle';
+      const nm = $('#whWinName').textContent, mid = Y + D + 85;   // (the middle of the name's line)
       const rs = whWin.classList.contains('live') && wh.reelS;
       const items = rs ? rs.at.map(m => [wh.list[m] ?? '', wh.pk && wh.pk[m]]) : [[nm, wh.winPk]];
-      let fs = 86; g.font = `400 ${fs}px Anton, Impact, sans-serif`;
-      const wOf = ([t, p]) => g.measureText(t).width + (p ? fs * 1.08 : 0);   // (the icon: .9 of the type, and a little gap)
-      while (fs > 30 && Math.max(...items.map(wOf)) > W - 80) { fs -= 4; g.font = `400 ${fs}px Anton, Impact, sans-serif`; }
-      g.fillStyle = '#f8c33a'; g.textAlign = 'left';
-      const atlas = whPkAtlas(), row = (it, y) => {
-        let x = (W - wOf(it)) / 2;
-        if (it[1] && atlas.complete && atlas.naturalWidth) {
-          const b = whPkBox(it[1], fs * .9); g.imageSmoothingEnabled = false;
-          g.drawImage(atlas, b.x, b.y, b.w, b.h, x, y - b.h * b.k / 2 - fs * .04, b.w * b.k, b.h * b.k); g.imageSmoothingEnabled = true;
+      const atlas = whPkAtlas(), hasAtlas = atlas.complete && atlas.naturalWidth;
+      let fs = 86;
+      const font = cx => { cx.font = `400 ${fs}px Anton, Impact, sans-serif`; cx.letterSpacing = '0px'; };
+      const iconW = p => { if (!p) return 0; const b = whPkBox(p, fs * .9); return b.w * b.k + fs * .18; };
+      const wOf = ([t, p]) => g.measureText(t).width + iconW(p);
+      font(g);
+      while (fs > 30 && Math.max(...items.map(wOf)) > W - 80) { fs -= 4; font(g); }
+      const lh = fs * 1.1;
+      const row = (cx, [t, p], ym) => {
+        font(cx); cx.textAlign = 'left'; cx.textBaseline = 'alphabetic'; cx.fillStyle = '#f8c33a';
+        const m = cx.measureText(t), base = ym + ((m.fontBoundingBoxAscent ?? fs * .9) - (m.fontBoundingBoxDescent ?? fs * .25)) / 2;
+        let x = (W - wOf([t, p])) / 2;
+        if (p && hasAtlas) {
+          const b = whPkBox(p, fs * .9); cx.imageSmoothingEnabled = false;
+          cx.drawImage(atlas, b.x, b.y, b.w, b.h, x, base + fs * .04 - b.h * b.k, b.w * b.k, b.h * b.k); cx.imageSmoothingEnabled = true;
+          x += b.w * b.k + fs * .18;
         }
-        g.fillText(it[0], x + (it[1] ? fs * 1.08 : 0), y);
+        cx.fillText(t, x, base);
       };
-      if (!rs) row(items[0], ty + 78);
-      else {   // (the reel, through its one-line window)
-        const lh = fs * 1.1; g.save(); g.beginPath(); g.rect(0, ty + 78 - lh / 2, W, lh); g.clip();
-        items.forEach((it, q) => row(it, ty + 78 + (q - 1 - rs.d) * lh)); g.restore();
+      if (!rs) row(g, items[0], mid);
+      else {   // (the reel on its own layer, faded out at the top and bottom like the page's window: clear, solid from 18% to 82%, clear)
+        const h = Math.ceil(lh), lay = whReel && whReel.width === W && whReel.height === h ? whReel : (whReel = whMk(W, h)), lc = lay.getContext('2d');
+        lc.setTransform(1, 0, 0, 1, 0, 0); lc.globalCompositeOperation = 'source-over'; lc.clearRect(0, 0, W, h);
+        items.forEach((it, q) => row(lc, it, lh / 2 + (q - 1 - rs.d) * lh));
+        const fade = lc.createLinearGradient(0, 0, 0, lh);
+        fade.addColorStop(0, 'rgba(0,0,0,0)'); fade.addColorStop(.18, '#000'); fade.addColorStop(.82, '#000'); fade.addColorStop(1, 'rgba(0,0,0,0)');
+        lc.globalCompositeOperation = 'destination-in'; lc.fillStyle = fade; lc.fillRect(0, 0, W, h);
+        g.drawImage(lay, 0, mid - lh / 2);
       }
     }
     // the confetti (its layer covers the whole window: take the part over the video's frame)
