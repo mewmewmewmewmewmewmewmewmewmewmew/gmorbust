@@ -3574,11 +3574,16 @@
         g.beginPath(); g.arc(x, y, r, 0, TAU); g.fillStyle = pg; g.fill();
       }
     }
-    // the hub
-    const hx = X + c, hy = Y + c, hr = D * .095, hub = $('#whHub');
-    g.beginPath(); g.arc(hx, hy, hr + D * .007, 0, TAU); g.fillStyle = '#0b0c0f'; g.fill();
+    // the hub: its black ring (with the page's soft shadow under it and faint light line around it), then the face with
+    // its grey line just inside the edge. Both lines are drawn bolder than the page's 1px (the video's compression wipes
+    // out a hairline that faint)
+    const hx = X + c, hy = Y + c, hr = D * .095, hk = hr + D * .007, hub = $('#whHub');
+    g.save(); g.shadowColor = 'rgba(0,0,0,.45)'; g.shadowBlur = D * .014; g.shadowOffsetY = D * .006;
+    g.beginPath(); g.arc(hx, hy, hk, 0, TAU); g.fillStyle = '#0b0c0f'; g.fill(); g.restore();
+    g.beginPath(); g.arc(hx, hy, hk + D * .001, 0, TAU); g.lineWidth = D * .002; g.strokeStyle = 'rgba(255,255,255,.12)'; g.stroke();
     const hg = g.createRadialGradient(hx, hy - hr * .4, 0, hx, hy, hr); hg.addColorStop(0, '#23252b'); hg.addColorStop(.7, '#121317'); hg.addColorStop(1, '#121317');
-    g.beginPath(); g.arc(hx, hy, hr, 0, TAU); g.fillStyle = hg; g.fill(); g.lineWidth = Math.max(1, u); g.strokeStyle = 'rgba(255,255,255,.13)'; g.stroke();
+    g.beginPath(); g.arc(hx, hy, hr, 0, TAU); g.fillStyle = hg; g.fill();
+    g.beginPath(); g.arc(hx, hy, hr - D * .0015, 0, TAU); g.lineWidth = D * .003; g.strokeStyle = 'rgba(255,255,255,.2)'; g.stroke();
     g.textAlign = 'center'; g.textBaseline = 'middle';
     g.fillStyle = getComputedStyle(hub.querySelector('span')).color;
     g.font = `600 ${Math.round(D * .015)}px Inter, system-ui, sans-serif`; g.letterSpacing = `${(D * .015 * .32).toFixed(1)}px`;
